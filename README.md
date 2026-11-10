@@ -11,7 +11,7 @@ camada de serviços.
 | Repositório | Conteúdo |
 |---|---|
 | `BLT` | Orquestração, documentação, plano, log de IA e snapshots CodeGraph |
-| `blt-project` | `api/` (Django), `web/` (React) e `hypermedia/` (HTMX + Alpine) |
+| [`blt-project`](https://github.com/campanafernando/blt-project) | `api/` (Django), `web/` (React) e `hypermedia/` (HTMX + Alpine) |
 
 `blt-project/` é um repositório Git independente dentro desta pasta, como
 `ana-api/` e `ana-web/` no ANA e `logus-api/` no LOGUS. Não é submódulo.

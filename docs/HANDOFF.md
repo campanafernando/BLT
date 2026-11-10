@@ -4,7 +4,10 @@ Atualizado: 2026-11-10
 
 ## Estado
 
-Base criada, executável e validada de ponta a ponta. Sem commit — aguardando autorização.
+Base criada, executável, validada de ponta a ponta e publicada:
+
+- https://github.com/campanafernando/blt-project
+- https://github.com/campanafernando/BLT
 
 ## Verificado nesta sessão
 
