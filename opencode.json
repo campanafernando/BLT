@@ -2,5 +2,35 @@
   "$schema": "https://opencode.ai/config.json",
   "experimental": {
     "subagent_depth": 2
+  },
+  "mcp": {
+    "timeout": {
+      "startup": 90000
+    },
+    "servers": {
+      "codegraph-api": {
+        "type": "local",
+        "command": ["bash", ".opencode/bin/codegraph-mcp.sh", "api"]
+      },
+      "codegraph-web": {
+        "type": "local",
+        "command": ["bash", ".opencode/bin/codegraph-mcp.sh", "web"]
+      },
+      "postgres-blt": {
+        "type": "local",
+        "command": ["bash", ".opencode/bin/postgres-mcp.sh"],
+        "enabled": true
+      },
+      "minio-blt": {
+        "type": "local",
+        "command": ["bash", ".opencode/bin/minio-mcp.sh"],
+        "enabled": true
+      },
+      "blt-specs": {
+        "type": "local",
+        "command": ["bash", "blt-project/mcp_server/run.sh"],
+        "enabled": true
+      }
+    }
   }
 }

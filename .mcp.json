@@ -1,0 +1,24 @@
+{
+  "mcpServers": {
+    "codegraph-api": {
+      "command": "bash",
+      "args": [".opencode/bin/codegraph-mcp.sh", "api"]
+    },
+    "codegraph-web": {
+      "command": "bash",
+      "args": [".opencode/bin/codegraph-mcp.sh", "web"]
+    },
+    "postgres-blt": {
+      "command": "bash",
+      "args": [".opencode/bin/postgres-mcp.sh"]
+    },
+    "minio-blt": {
+      "command": "bash",
+      "args": [".opencode/bin/minio-mcp.sh"]
+    },
+    "blt-specs": {
+      "command": "bash",
+      "args": ["blt-project/mcp_server/run.sh"]
+    }
+  }
+}
