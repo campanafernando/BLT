@@ -41,6 +41,21 @@ Credenciais de demonstração: `demo` / `demo12345`.
 | [`docs/tasks/mvp.md`](docs/tasks/mvp.md) | Escopo funcional mínimo |
 | [`blt-project/README.md`](blt-project/README.md) | Como rodar, endpoints e decisões |
 
+## MCP (bônus)
+
+O orquestrador expõe cinco conexões MCP, com credencial separada por fonte:
+
+| Servidor | Fonte | Modo |
+|---|---|---|
+| `codegraph-api` / `codegraph-web` | índices de `blt-project/api` e `web` | leitura |
+| `postgres-blt` | Postgres do compose | read-only (`blt_mcp`) |
+| `minio-blt` | MinIO do compose | read-only (sem `put`/`delete`) |
+| `blt-specs` | fluxo de spec do `blt-project` | leitura + publicar issue |
+
+Configuração em [`opencode.json`](opencode.json) e [`.mcp.json`](.mcp.json); launchers em
+`.opencode/bin/`; servidor MinIO em `mcp_servers/`. O desenho, a comparação com o gateway
+do FRETE-E e o modelo de segurança estão em [`docs/mcp.md`](docs/mcp.md).
+
 ## Workflow
 
 1. Trabalho acionável em `docs/tasks/mvp.md`.

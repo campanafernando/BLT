@@ -35,6 +35,14 @@ cliente server-rendered com HTMX + Alpine.js.
 - CSS: um único `index.css` com variáveis; sem framework de UI.
 - Comentário só para o "porquê" que o código não mostra.
 
+## MCP
+
+- Um servidor por fonte; credencial no `.env`, nunca em `opencode.json` ou `.mcp.json`.
+- `postgres-blt` e `minio-blt` são read-only por construção. Não adicione ferramenta de
+  escrita sem revisar o contrato e o role do banco.
+- `blt-specs` escreve apenas issues, e só com `GITHUB_TOKEN` configurado.
+- O padrão de escala é o gateway do FRETE-E; aqui os launchers fazem o papel de roteamento.
+
 ## Proibido
 
 - Commitar sem autorização.
