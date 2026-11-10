@@ -1,0 +1,33 @@
+# O projeto é um repositório independente, como ana-api/ e logus-api/ no ANA.
+blt-project/
+
+# Credenciais locais
+.env
+.env.*
+!.env.example
+
+# CodeGraph
+codegraph/**/*.db
+codegraph/**/*.db-shm
+codegraph/**/*.db-wal
+.codegraph/
+
+# Python / Node
+**/.venv/
+**/venv/
+**/__pycache__/
+**/*.py[cod]
+**/.pytest_cache/
+**/.ruff_cache/
+**/node_modules/
+**/dist/
+**/.next/
+**/*.tsbuildinfo
+**/coverage/
+**/htmlcov/
+**/.coverage
+
+# Artefatos locais
+*.log
+.DS_Store
+*.swp
