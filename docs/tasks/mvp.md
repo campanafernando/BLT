@@ -1,31 +1,33 @@
-# MVP — escopo funcional
+# MVP — functional scope
 
-## História
+## Story
 
-Como pessoa que organiza trabalho, quero registrar tarefas, atribuí-las a alguém e
-acompanhar o que está atrasado, para não perder prazo e saber o que está com quem.
+As someone who organizes work, I want to record tasks, assign them to someone and track
+what is late, so I do not miss deadlines and know who owns what.
 
-## Fluxo
+## Flow
 
-1. Entrar com usuário e senha.
-2. Ver minhas tarefas (criadas por mim ou atribuídas a mim), com filtro por status e vencimento.
-3. Criar tarefa com título, descrição, vencimento e responsável.
-4. Editar, concluir e reabrir.
-5. Excluir tarefa que eu criei.
+1. Sign in with username and password.
+2. See my tasks (created by me or assigned to me), filtered by status and due date.
+3. Create a task with title, description, due date and assignee.
+4. Edit, complete and reopen.
+5. Delete a task I created.
+6. Generate an implementation spec from a Gitea issue and publish it back as an issue.
 
-## Regras
+## Rules
 
-- Tarefa só é visível para quem criou ou para quem foi atribuída.
-- Apenas o criador exclui.
-- Concluir é idempotente: concluir duas vezes não muda `completed_at`.
-- Reabrir limpa `completed_at`.
-- Atribuir exige usuário ativo.
-- `is_overdue` é derivado: vencimento anterior a hoje e status diferente de concluída.
-- Data de vencimento no passado é aceita (registro retroativo) e aparece como atrasada.
+- A task is visible only to its creator or assignee.
+- Only the creator deletes.
+- Completing is idempotent: completing twice does not change `completed_at`.
+- Reopening clears `completed_at`.
+- Assigning requires an active user.
+- `is_overdue` is derived: due date before today and status not done.
+- A past due date is accepted (backfill) and shown as overdue.
 
-## Fora de escopo
+## Out of scope
 
-- Comentários, anexos, etiquetas, subtarefas.
-- Notificação em tempo real.
-- Multiusuário por organização.
+- Comments, attachments, labels, subtasks.
+- Realtime notifications.
+- Multi-tenant organizations.
 - Drag-and-drop.
+- Free-form AI chat.

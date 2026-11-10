@@ -1,73 +1,80 @@
 # BLT
 
-**Backlog, Lists & Tasks** — repositório de orquestração do projeto BLT.
+**Backlog, Lists & Tasks** — orchestration repository for the BLT project.
 
-Projeto de referência full-stack: API Django/DRF com JWT e Celery, cliente React
-(Vite) e um cliente alternativo server-rendered com HTMX + Alpine.js sobre a mesma
-camada de serviços.
+A full-stack reference project: a Django/DRF API with JWT and Celery, a React client,
+and an alternative server-rendered client built with HTMX + Alpine.js over the same
+service layer.
 
-## Ecossistema
+## Ecosystem
 
-| Repositório | Conteúdo |
+| Repository | Contents |
 |---|---|
-| `BLT` | Orquestração, documentação, plano, log de IA e snapshots CodeGraph |
-| [`blt-project`](https://github.com/campanafernando/blt-project) | `api/` (Django), `web/` (React) e `hypermedia/` (HTMX + Alpine) |
+| `BLT` | Orchestration, documentation, delivery plan, AI log and CodeGraph snapshots |
+| [`blt-project`](https://github.com/campanafernando/blt-project) | `api/` (Django), `web/` (React) and `hypermedia/` (HTMX + Alpine) |
 
-`blt-project/` é um repositório Git independente dentro desta pasta, como
-`ana-api/` e `ana-web/` no ANA e `logus-api/` no LOGUS. Não é submódulo.
+`blt-project/` is an independent Git repository inside this folder, like `ana-api/` and
+`ana-web/` in ANA and `logus-api/` in LOGUS. It is not a submodule.
 
-## Início rápido
+## Quick start
 
 ```sh
-cp .env.example .env          # preencha OPENCODE_API_KEY se for usar IA
+cp .env.example .env          # fill the MCP credentials
 cd blt-project
 cp .env.example .env
-make setup                    # uv sync + bun install + migrate + seed
+make setup                    # uv + npm + migrate + seed
 make api                      # http://127.0.0.1:8000
-make web                      # http://127.0.0.1:5173  (outro terminal)
-make htmx                     # http://127.0.0.1:8000/app/
+make web                      # http://127.0.0.1:5173  (another terminal)
 ```
 
-Credenciais de demonstração: `demo` / `demo12345`.
+Demo credentials: `demo` / `demo12345`.
 
-## Documentação
+With Docker (API, web, Postgres, Redis, Mailpit, Gitea):
 
-| Documento | Assunto |
+```sh
+cd blt-project
+make up                       # Gitea at http://localhost:3000
+```
+
+## Documentation
+
+| Document | Subject |
 |---|---|
-| [`docs/HANDOFF.md`](docs/HANDOFF.md) | Estado atual, decisões e próximo passo |
-| [`docs/architecture.md`](docs/architecture.md) | Fronteiras entre API, React e HTMX |
-| [`docs/plan.md`](docs/plan.md) | Plano de execução e critérios de aceite |
-| [`docs/ai-log.md`](docs/ai-log.md) | Registro de uso de ferramentas de IA |
-| [`docs/tasks/mvp.md`](docs/tasks/mvp.md) | Escopo funcional mínimo |
-| [`blt-project/README.md`](blt-project/README.md) | Como rodar, endpoints e decisões |
+| [`docs/HANDOFF.md`](docs/HANDOFF.md) | Current state, decisions and next step |
+| [`docs/architecture.md`](docs/architecture.md) | Boundaries between API, React and HTMX |
+| [`docs/plan.md`](docs/plan.md) | Delivery plan and acceptance criteria |
+| [`docs/ai-log.md`](docs/ai-log.md) | Record of AI tooling usage |
+| [`docs/tasks/mvp.md`](docs/tasks/mvp.md) | Minimum functional scope |
+| [`docs/mcp.md`](docs/mcp.md) | MCP topology and the FRETE-E gateway comparison |
+| [`blt-project/README.md`](blt-project/README.md) | How to run, endpoints and decisions |
 
-## MCP (bônus)
+## MCP (bonus)
 
-O orquestrador expõe cinco conexões MCP, com credencial separada por fonte:
+The orchestrator exposes five MCP connections, each with its own credential:
 
-| Servidor | Fonte | Modo |
+| Server | Source | Mode |
 |---|---|---|
-| `codegraph-api` / `codegraph-web` | índices de `blt-project/api` e `web` | leitura |
-| `postgres-blt` | Postgres do compose | read-only (`blt_mcp`) |
-| `minio-blt` | MinIO do compose | read-only (sem `put`/`delete`) |
-| `blt-specs` | fluxo de spec do `blt-project` | leitura + publicar issue |
+| `codegraph-api` / `codegraph-web` | indexes of `blt-project/api` and `web` | read |
+| `postgres-blt` | Compose Postgres | read-only (`blt_mcp`) |
+| `minio-blt` | Compose MinIO | read-only (no `put`/`delete`) |
+| `blt-specs` | `blt-project` spec flow | read + publish issue |
 
-Configuração em [`opencode.json`](opencode.json) e [`.mcp.json`](.mcp.json); launchers em
-`.opencode/bin/`; servidor MinIO em `mcp_servers/`. O desenho, a comparação com o gateway
-do FRETE-E e o modelo de segurança estão em [`docs/mcp.md`](docs/mcp.md).
+Configuration in [`opencode.json`](opencode.json) and [`.mcp.json`](.mcp.json); launchers
+in `.opencode/bin/`; MinIO server in `mcp_servers/`. The design, the FRETE-E gateway
+comparison and the security model are in [`docs/mcp.md`](docs/mcp.md).
 
 ## Workflow
 
-1. Trabalho acionável em `docs/tasks/mvp.md`.
-2. Contrato da API antes do cliente: schema OpenAPI → tipos gerados.
-3. Implementar em `blt-project/`, com testes na mesma entrega.
-4. `make check` no projeto antes de encerrar a tarefa.
-5. Registrar prompts, correções e trade-offs em `docs/ai-log.md`.
-6. Atualizar `HANDOFF.md` e o changelog do `blt-project`.
+1. Actionable work in `docs/tasks/mvp.md`.
+2. API contract before the client: OpenAPI schema → generated types.
+3. Implement in `blt-project/`, with tests in the same delivery.
+4. `make check` in the project before closing the task.
+5. Record prompts, corrections and trade-offs in `docs/ai-log.md`.
+6. Update `HANDOFF.md` and the project changelog.
 
-## Regras
+## Rules
 
-- Branch de trabalho: `main` (projeto novo, sem ambientes).
-- Nunca commitar ou publicar sem autorização explícita.
-- Segredos apenas em `.env`; `.env.example` documenta as chaves.
-- PT-BR na documentação e na UX; identificadores em inglês.
+- Working branch: `main` (new project, no environments).
+- Never commit or publish without explicit authorization.
+- Secrets only in `.env`; `.env.example` documents every key.
+- English in code, documentation and UI; Portuguese only in the personal study notes.

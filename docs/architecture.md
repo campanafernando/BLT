@@ -1,77 +1,89 @@
-# Arquitetura do BLT
+# BLT architecture
 
-## Visão
+## Overview
 
 ```
                     ┌──────────────────────────┐
-  React (Vite) ────▶│  API Django + DRF + JWT  │
+  React (Vite) ────▶│  Django API + DRF + JWT  │
                     │  views → services        │
   HTMX + Alpine ───▶│        → selectors       │
   (server-rendered) │        → models          │
                     └────────────┬─────────────┘
                                  │
                      Postgres ◀──┴──▶ Redis ──▶ Celery
+                                 │
+                              Gitea (issues)
 ```
 
-Os dois clientes usam a **mesma camada de serviço**. A API expõe JSON; o app
-`hypermedia` renderiza HTML. Nenhuma regra de negócio é duplicada.
+Both clients use the **same service layer**. The API returns JSON; the `hypermedia` app
+renders HTML. No business rule is duplicated. The spec flow talks to Gitea through a
+small adapter (`api/specs/gitea.py`).
 
-## Camadas da API
+## API layers
 
-| Camada | Arquivo | Responsabilidade |
+| Layer | File | Responsibility |
 |---|---|---|
-| Model | `tasks/models.py` | Invariantes de dados, índices, `is_overdue` |
-| Selector | `tasks/selectors.py` | Quais registros o usuário pode ver; queries |
-| Filter | `tasks/filters.py` | Filtros de status, data e busca |
-| Service | `tasks/services.py` | Criar, editar, concluir, reabrir, atribuir |
-| Serializer | `tasks/serializers.py` | Contrato de entrada e saída |
-| View | `tasks/views.py` | Validação de entrada, chamada de serviço, resposta |
-| Permission | `tasks/permissions.py` | Quem pode excluir |
+| Model | `tasks/models.py` | Data invariants, indexes, `is_overdue` |
+| Selector | `tasks/selectors.py` | Which rows the user may see; queries |
+| Filter | `tasks/filters.py` | Status, date and search filters |
+| Service | `tasks/services.py` | Create, update, complete, reopen, assign |
+| Serializer | `tasks/serializers.py` | Input and output contract |
+| View | `tasks/views.py` | Validate input, call a service, respond |
+| Permission | inline in the view | Only the creator deletes |
 
-A view não conhece ORM. O serializer não decide regra. O template não calcula nada.
+The view does not know the ORM. The serializer does not decide a rule. The template does
+not calculate anything.
 
-## Por que dois clientes
+## Why two clients
 
-A vaga trabalha com HTMX + Alpine como padrão SSR e React para interfaces legadas.
-O BLT demonstra as duas metades sobre um domínio único:
+The role uses HTMX + Alpine as the SSR default and React for legacy interfaces. BLT
+demonstrates both halves over one domain:
 
-- `web/` — SPA React, estado de servidor com TanStack Query, formulários com React Hook Form.
-- `hypermedia/` — páginas Django, partials HTMX, Alpine para estado local de UI.
+- `web/` — React SPA, server state with TanStack Query, forms with React Hook Form.
+- `hypermedia/` — Django pages, HTMX partials, Alpine for local UI state.
 
-O ponto de arquitetura: **a regra existe uma vez**. Se amanhã o cliente React for
-removido, a API continua; se a API virar pública, o HTMX continua.
+The architectural point: **the rule exists once**. If the React client is removed, the API
+remains; if the API becomes public, the HTMX client remains.
 
-## Autenticação
+## Authentication
 
-- API: JWT (access 30 min, refresh 7 dias, rotação e blacklist).
-- HTMX: sessão Django, CSRF em formulário e em `hx-headers`.
-- Os dois convivem no mesmo projeto. O usuário de demonstração serve aos dois.
+- API: JWT (access 30 min, refresh 7 days, rotation and blacklist).
+- HTMX: Django session, CSRF in the form and in `hx-headers`.
+- Both coexist in the same project. The demo user serves both.
 
-Trade-off documentado: o refresh token fica em `localStorage` no React. Em produção
-o correto é cookie `HttpOnly` + `SameSite`, com CSRF; o BLT usa `localStorage` para
-manter a API stateless e o exercício simples. Ver `docs/ai/03-decisions.md`.
+Documented trade-off: the refresh token lives in `localStorage` in React. In production
+the correct approach is an `HttpOnly` cookie with `SameSite` and CSRF; BLT keeps the API
+stateless to stay simple. See `blt-project/docs/ai/03-decisions.md`.
 
-## Fila
+## Queue
 
-Celery usa Redis como broker e backend. Dois trabalhos:
+Celery uses Redis as broker and backend. Two jobs:
 
-- `notify_assignment` — e-mail (console em dev) quando uma tarefa é atribuída.
-- `send_due_soon_digest` — resumo diário de tarefas que vencem amanhã.
+- `notify_assignment` — email (console locally) when a task is assigned.
+- `send_due_soon_digest` — daily summary of tasks due tomorrow.
 
-O envio é disparado com `transaction.on_commit`: se a transação falhar, não há e-mail
-de uma tarefa que não existe. Em teste, `CELERY_TASK_ALWAYS_EAGER=True`.
+Sending is scheduled with `transaction.on_commit`: if the transaction fails, no email is
+sent for a task that does not exist. In tests, `CELERY_TASK_ALWAYS_EAGER=True`.
 
-## Dados
+## Data
 
-`Task` guarda `status`, `due_date` e `completed_at` separadamente. `is_overdue` é
-derivado, não armazenado: evita job de escrita diário e dado inconsistente. O custo é
-calcular na leitura — irrelevante no volume do domínio, e documentado.
+`Task` stores `status`, `due_date` and `completed_at` separately. `is_overdue` is derived,
+not stored: it avoids a nightly write job and inconsistent data. The cost is computing it
+on read — irrelevant at this volume, and documented.
 
-`assigned_to` usa `PROTECT`: excluir usuário com tarefas atribuídas falha em vez de
-apagar histórico.
+`assigned_to` uses `PROTECT`: deleting a user with assigned tasks fails instead of
+erasing history.
 
-## Limites conhecidos
+## Gitea
 
-- Sem multitenancy. Toda tarefa pertence a um usuário (dono ou responsável).
-- Sem anexos, comentários ou histórico de alterações.
-- `hypermedia` sem paginação e sem drag-and-drop.
+Gitea provides the issue tracker for the GenAI flow and runs in Compose on port 3000. A
+management command creates the demo repository and four issues; a Compose one-shot service
+runs it on every `up` (idempotent). The API accepts a token or basic auth, so the local
+demo needs no token provisioning.
+
+## Known limits
+
+- No multitenancy. Every task belongs to one user (creator or assignee).
+- No attachments, comments or change history.
+- `hypermedia` has no inline editing and no drag-and-drop.
+- The spec flow supports one tracker (Gitea). The adapter is small enough to add another.

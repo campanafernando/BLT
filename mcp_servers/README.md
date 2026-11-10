@@ -1,20 +1,20 @@
 # MCP — MinIO read-only
 
-Servidor MCP mínimo para inspecionar o bucket do BLT sem risco de alteração.
+A minimal MCP server to inspect the BLT bucket with no risk of change.
 
-## Ferramentas
+## Tools
 
-| Ferramenta | Retorno |
+| Tool | Returns |
 |---|---|
-| `list_buckets` | nomes dos buckets visíveis |
-| `list_objects(prefix, limit, bucket)` | chave, tamanho e data de modificação |
-| `object_metadata(bucket, key)` | content-type, tamanho, etag, data |
-| `presigned_url(bucket, key, expires_minutes)` | URL de GET temporária |
+| `list_buckets` | names of visible buckets |
+| `list_objects(prefix, limit, bucket)` | key, size and last modified |
+| `object_metadata(bucket, key)` | content type, size, etag, date |
+| `presigned_url(bucket, key, expires_minutes)` | temporary GET URL |
 
-Não existe `put`, `delete` ou `policy`. A credencial pode ser de leitura; mesmo que não
-seja, o servidor não oferece a operação.
+There is no `put`, `delete` or `policy`. The credential can be read-only; even if it is
+not, the server does not expose the operation.
 
-## Variáveis
+## Variables
 
 ```
 MINIO_ENDPOINT=http://127.0.0.1:9200
@@ -23,11 +23,11 @@ MINIO_SECRET_KEY=...
 MINIO_BUCKET=blt-media
 ```
 
-## Executar
+## Run
 
 ```sh
 bash .opencode/bin/minio-mcp.sh
 ```
 
-O launcher cria um ambiente `uv` efêmero com `mcp` e `boto3`; não é preciso instalar
-nada no venv da API.
+The launcher creates an ephemeral `uv` environment with `mcp` and `boto3`; nothing needs
+to be installed in the API virtualenv.

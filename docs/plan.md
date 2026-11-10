@@ -1,42 +1,46 @@
-# Plano — BLT
+# Plan — BLT
 
-Prazo alvo: sexta, 2026-11-13. Hoje: terça, 2026-11-10.
+Target date: Friday, 2026-11-13. Today: Tuesday, 2026-11-10.
 
-## Critérios de aceite
+## Acceptance criteria
 
-- [x] CRUD de tarefas com JWT
-- [x] Atribuição e conclusão de tarefa
-- [x] Filtro por status e por intervalo de vencimento
-- [x] Paginação
+- [x] Task CRUD with JWT
+- [x] Assign and complete a task
+- [x] Filter by status and due date range
+- [x] Pagination
 - [x] Rate limiting
-- [x] Celery + Redis com tarefa assíncrona
-- [x] Testes com cobertura ≥ 80%
-- [x] Dockerfile + compose (API, banco, Redis, worker, web)
-- [x] README com setup, credenciais e decisões
-- [x] OpenAPI em `/api/docs/`
-- [x] Cliente React com CRUD, filtros e responsividade
-- [x] Bônus HTMX + Alpine sobre a mesma camada de serviço
-- [x] CI no GitHub Actions
-- [ ] Deploy público
-- [ ] Snapshot CodeGraph
+- [x] Celery + Redis with an async task
+- [x] Tests with coverage ≥ 80%
+- [x] Dockerfile + Compose (API, database, Redis, worker, web)
+- [x] README with setup, credentials and decisions
+- [x] OpenAPI at `/api/docs/`
+- [x] React client with CRUD, filters and responsiveness
+- [x] Bonus: HTMX + Alpine over the same service layer
+- [x] GenAI: spec from a Gitea issue, with publish back to Gitea
+- [x] MCP servers for CodeGraph, Postgres, MinIO and specs
+- [x] CI workflow
+- [ ] Public deployment
+- [ ] CodeGraph snapshot committed
 
-## Sequência
+## Sequence
 
-| Bloco | Entrega | Estado |
+| Block | Delivery | State |
 |---|---|---|
-| 1 | Estrutura, settings, modelos, JWT, CRUD, filtros | pronto |
-| 2 | Celery, throttling, testes, cobertura | pronto |
-| 3 | React: login, board, formulário, filtros | pronto |
-| 4 | HTMX + Alpine: partials, modal, confirmação | pronto |
-| 5 | Documentação de IA e ensaio da demo | pronto |
-| 6 | CI, deploy, gravação | CI pronto; deploy e gravação pendentes |
+| 1 | Structure, settings, models, JWT, CRUD, filters | done |
+| 2 | Celery, throttling, tests, coverage | done |
+| 3 | React: login, board, form, filters | done |
+| 4 | HTMX + Alpine: partials, modal, confirmation | done |
+| 5 | Spec from issue + Gitea + MCP | done |
+| 6 | English pass, demo rehearsal, deployment | in progress |
 
-## Riscos
+## Risks
 
-| Risco | Mitigação |
+| Risk | Mitigation |
 |---|---|
-| Review perguntar "por que não ViewSet" | README explica: views explícitas para serviços explícitos |
-| Cobertura alta sem assert útil | Testes cobrem borda: idempotência, 404, inativo, data passada |
-| Demo quebrar em clone limpo | Checklist de clone em `/tmp` antes de entregar |
-| Excesso de abstração | Sem repositório, use case ou DTO; camadas só onde há regra |
-| `localStorage` no React | Trade-off documentado em `docs/ai/03-decisions.md` |
+| Reviewer asks "why not a ViewSet" | README explains: explicit views for explicit services |
+| High coverage without useful asserts | Tests cover edges: idempotency, 404, inactive user, past date |
+| Demo breaks on a clean clone | Clone into `/tmp` checklist before delivery |
+| Over-abstraction | No repository, use case or DTO; layers only where there is a rule |
+| `localStorage` in React | Trade-off documented in `docs/ai/03-decisions.md` |
+| GenAI provider unavailable | Seeded spec and a clear 503 path |
+| GitHub billing blocks CI | Account issue tracked; workflow validated locally |
