@@ -126,3 +126,31 @@ tested for removal.
 (constraint vs. test data, marker vs. counter, SQL vs. psql variables, token scope vs.
 seed) showed up only when the pieces ran together against real services. And an ambiguous
 instruction is cheaper to confirm than to move and revert.
+
+## 2026-11-11 — UI aligned with ballastlane.com
+
+**Goal:** make the fonts, colours and components of both clients match the Ballast Lane site,
+as the argument for the UI choices in the presentation.
+
+**Tool:** OpenCode with two parallel subagents (React and HTMX) after measuring the site
+myself in a headless browser.
+
+**Method:** the previous palette was recalled, not measured. I read the computed styles of
+the live site (body, headings, buttons, links, nav, fields, labels, cards, footer) and wrote
+them down as one token table, then gave the same table to both agents with disjoint files.
+The measurement corrected three assumptions: the body font is Space Grotesk, not Poppins;
+the primary button is orange with dark text, not blue with white text; and the corners are
+8 px (controls) and 10 px (cards), not 10 and 14.
+
+**Verification:** a script compares 60 computed values in both running clients with the
+measured tokens (all match), checks that no font other than Space Grotesk and IBM Plex Mono
+loads, computes the WCAG contrast of the key pairs (all at least 4.5:1) and takes desktop,
+mobile and dialog screenshots that I looked at. The functional browser smoke test still
+passes with no console errors.
+
+**Corrected / kept on purpose:** orange text fails AA on light backgrounds, so it is used
+only for fills and borders; an HTMX mobile bug (the check button clipped by a CSS
+specificity clash) was fixed along the way; no dark theme.
+
+**Lesson:** "follows the site" is only a claim until the numbers are read from the site and
+compared with the running app.

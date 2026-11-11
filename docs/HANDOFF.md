@@ -58,6 +58,9 @@ console errors, warnings or failed requests. It is a manual script, not part of 
 - **Spec generation fix.** The provider reply was sometimes cut at `max_tokens=1200` (reasoning
   tokens count) and surfaced as "invalid JSON"; the cap is now 4000 and a truncated or empty
   answer gets its own message.
+- **UI aligned with ballastlane.com.** Tokens measured in a browser (Space Grotesk and IBM
+  Plex Mono, orange primary button with ink text, 8/10 px radii, dark footer) applied to both
+  clients; 60 computed-style checks and the WCAG pairs pass. Table in `blt-project/README.md`.
 - **New feature: spec → tasks.** `POST /api/v1/specs/{id}/tasks/`, a React dialog, and the MCP
   tool `create_tasks_from_spec` (draft unless `confirm=true`). No new model call.
 
@@ -69,7 +72,7 @@ Reasons: [`architecture.md`](architecture.md).
 - `unblock_account()` in `specs/gitea.py` is probably redundant; validate on a fresh Gitea
   volume.
 - `Spec` does not use `BaseModel`.
-- Fonts still load from Google Fonts.
+- Fonts still load from Google Fonts. No dark theme (the Ballast Lane site has one).
 - React filters are not in the URL.
 - No automated browser or React component tests (the smoke test above is manual).
 - `seed` bypasses the services on purpose.
