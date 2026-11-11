@@ -32,7 +32,7 @@ server-rendered client with HTMX + Alpine.js.
 
 - Python: ruff, line-length 100, double quotes, sorted imports.
 - TypeScript: no implicit `any`; small functions; server state in TanStack Query.
-- CSS: one `index.css` with variables; no UI framework.
+- CSS: design tokens in one `index.css`; the React client uses Tailwind utilities over them, the HTMX client plain CSS; no component library.
 - Comments only for the "why" the code cannot show.
 
 ## MCP
