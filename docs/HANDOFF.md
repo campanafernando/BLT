@@ -65,6 +65,8 @@ console errors, warnings or failed requests. It is a manual script, not part of 
   has matching accounts and 13 issues: the tasks of `ballast` and `lane` are mirrored as
   assigned issues, and #13 ("Export the task list to CSV") is left without a task to try the
   spec flow. The mirroring is seed data, not a live sync.
+- **Favicon and one-command start.** A checklist-mark favicon (SVG, ICO, touch icon) in both
+  clients, and `make up` that waits for the seed and prints the addresses and the three users.
 - **New feature: spec → tasks.** `POST /api/v1/specs/{id}/tasks/`, a React dialog, and the MCP
   tool `create_tasks_from_spec` (draft unless `confirm=true`). No new model call.
 
