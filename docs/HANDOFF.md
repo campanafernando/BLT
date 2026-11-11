@@ -23,7 +23,7 @@ now targets Gitea.
 | Real flow | JWT login, task, email in Mailpit through the worker, HTMX board |
 | GenAI | Gitea issue #1 → spec (19.2s in the provider) → Gitea issue #5 |
 | MCP | Postgres, CodeGraph api/web, MinIO and specs answering over stdio |
-| CI | workflow valid; execution blocked by GitHub billing |
+| Delivery checks | local commands documented; GitHub Actions disabled |
 
 ## What is ready
 
@@ -38,7 +38,7 @@ now targets Gitea.
 - `blt-project/mcp_server`: four MCP tools over the same services.
 - `blt-project/compose.yaml`: Postgres 16, Redis 7, Mailpit, Gitea 1.24, API, worker,
   beat, Nginx; MinIO behind the `storage` profile.
-- `blt-project/.github/workflows/ci.yml`: API on Postgres + web typecheck/build.
+- Local delivery checks: API tests on Postgres + web typecheck/build.
 
 ## MCP (bonus)
 
@@ -50,7 +50,7 @@ now targets Gitea.
 
 ## Next step
 
-1. Fix GitHub billing so CI can run (jobs do not even start today).
+1. Keep delivery checks local; GitHub Actions is disabled.
 2. Publish a demo (Railway or a VPS) with seed data and the sample issues.
 3. Review `docs/ai/02-review.md` with the real prompts from the session.
 4. Rehearse `docs/demo.md` and record a five-minute backup.
@@ -62,4 +62,4 @@ now targets Gitea.
 - No React component tests (the API covers the rules).
 - Refresh token in `localStorage` — documented trade-off.
 - MinIO depends on a local build (images are no longer published).
-- CI configured but blocked by the GitHub account billing.
+- GitHub Actions disabled; delivery checks run locally.

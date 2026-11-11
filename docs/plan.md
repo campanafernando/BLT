@@ -18,7 +18,7 @@ Target date: Friday, 2026-11-13. Today: Tuesday, 2026-11-10.
 - [x] Bonus: HTMX + Alpine over the same service layer
 - [x] GenAI: spec from a Gitea issue, with publish back to Gitea
 - [x] MCP servers for CodeGraph, Postgres, MinIO and specs
-- [x] CI workflow
+- [x] Local delivery checks
 - [ ] Public deployment
 - [ ] CodeGraph snapshot committed
 
@@ -43,4 +43,4 @@ Target date: Friday, 2026-11-13. Today: Tuesday, 2026-11-10.
 | Over-abstraction | No repository, use case or DTO; layers only where there is a rule |
 | `localStorage` in React | Trade-off documented in `docs/ai/03-decisions.md` |
 | GenAI provider unavailable | Seeded spec and a clear 503 path |
-| GitHub billing blocks CI | Account issue tracked; workflow validated locally |
+| GitHub Actions disabled | Delivery checks run locally; no hosted workflow |
