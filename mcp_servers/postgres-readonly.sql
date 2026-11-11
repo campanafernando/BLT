@@ -1,20 +1,26 @@
--- Run once against the BLT database. Replace :'mcp_password' with a real
--- password (the launcher reads BLT_PG_PASSWORD from .env).
+-- Run once (and again after schema changes) against the BLT database. Safe to re-run.
+-- The password comes from BLT_PG_PASSWORD in the BLT .env. From the BLT root:
 --
 -- docker compose -f blt-project/compose.yaml exec -T db psql -U blt -d blt \
 --   -v mcp_password="$(grep '^BLT_PG_PASSWORD=' .env | cut -d= -f2-)" \
 --   -f - < mcp_servers/postgres-readonly.sql
+--
+-- blt_mcp can read only tasks_task, specs_spec and the mcp_users view. Everything else
+-- (password hashes, JWT blacklist, sessions) stays out of reach. Run `migrate` first.
 
-DO $$
-BEGIN
-  IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'blt_mcp') THEN
-    CREATE ROLE blt_mcp LOGIN PASSWORD :'mcp_password' NOSUPERUSER NOCREATEDB NOCREATEROLE;
-  ELSE
-    ALTER ROLE blt_mcp PASSWORD :'mcp_password';
-  END IF;
-END $$;
+-- psql does not expand :'vars' inside $$ blocks, hence \gexec.
+SELECT 'CREATE ROLE blt_mcp NOSUPERUSER NOCREATEDB NOCREATEROLE'
+ WHERE NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'blt_mcp') \gexec
+SELECT format('ALTER ROLE blt_mcp LOGIN PASSWORD %L', :'mcp_password') \gexec
+
+-- Drop what earlier versions of this script granted.
+ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT ON TABLES FROM blt_mcp;
+REVOKE ALL ON ALL TABLES IN SCHEMA public FROM blt_mcp;
 
 GRANT CONNECT ON DATABASE blt TO blt_mcp;
 GRANT USAGE ON SCHEMA public TO blt_mcp;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO blt_mcp;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blt_mcp;
+
+CREATE OR REPLACE VIEW mcp_users AS
+  SELECT id, username, first_name, last_name, is_active FROM auth_user;
+
+GRANT SELECT ON tasks_task, specs_spec, mcp_users TO blt_mcp;

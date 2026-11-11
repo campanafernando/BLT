@@ -10,12 +10,12 @@ only when explicitly asked.
 | `codegraph-web` | index of `blt-project/web` | read | symbols, callers, callees, impact, context |
 | `postgres-blt` | Compose Postgres | **read-only** | schemas, tables, details, restricted SQL |
 | `minio-blt` | Compose MinIO | **read-only** | buckets, objects, metadata, presigned URL |
-| `blt-specs` | BLT API | read + issue write | list issues, generate spec, list specs, publish |
+| `blt-specs` | `blt-project/mcp_server` (same services as the API) | read + issue write | list issues, generate spec, list specs, publish, create tasks from a spec (needs `confirm=true`) |
 
 ## Why one server per source
 
 Credentials are the main reason. The Postgres MCP uses `blt_mcp`, a role with `SELECT`
-and nothing else; the MinIO server has no `put` or `delete` in its code. A single server
+on a short list of objects and nothing else; the MinIO server has no `put` or `delete` in its code. A single server
 would leak a write credential into read-only tools.
 
 The other reasons are operational: a slow server does not take the others down, each one
@@ -26,6 +26,7 @@ restarts or reindexes on its own, and the owner of the data defines the contract
 
 ```sh
 cp .env.example .env      # fill BLT_PG_PASSWORD and MINIO_SECRET_KEY
+                          # (MINIO_SECRET_KEY = MINIO_RO_SECRET_KEY, the read-only user)
 
 # 1. Project database and MinIO
 cd blt-project
@@ -66,13 +67,39 @@ internal implementations and the client talks to a single endpoint that resolves
 
 ## Security
 
-- `postgres-blt` runs with `--access-mode restricted`; the `blt_mcp` role has no `CREATE`,
-  `INSERT`, `UPDATE` or `DELETE` (tested: `InsufficientPrivilege`).
-- `minio-blt` implements no write: only `list`, `head` and a GET `presign`.
-- `blt-specs` writes only issues in the spec's source repository, and only when Gitea
-  credentials are configured.
+- `postgres-blt` runs with `--access-mode restricted`. The `blt_mcp` role has `SELECT` on
+  two tables (`tasks_task`, `specs_spec`) and one view (`mcp_users`: id, username, names,
+  `is_active`). Password hashes, the JWT blacklist and sessions are not readable. New
+  tables are not granted automatically; rerun `postgres-readonly.sql` to widen access.
+- `minio-blt` implements no write, and its credential is a MinIO user created by `minio-init`
+  with a policy scoped to the project bucket (list and get, no put or delete). The built-in
+  `readonly` policy is not used: it cannot list a bucket. It never uses the root keys.
+- `blt-specs` writes only issues, only in `GITEA_ALLOWED_REPOS`, and only with Gitea
+  credentials. The Gitea bot is not an admin and the token the API uses has only the
+  `write:issue` scope; the one-shot `gitea-seed` creates the repository with the bot's
+  password instead, so no long-lived token can create repositories.
+- Compose services get an explicit `environment:` each, not the whole `.env`. The worker
+  and beat see no AI, Gitea or storage secrets; only the API (and the one-shot
+  `gitea-seed`) see Gitea.
+- The MCP `cli` user is inactive with an unusable password: it owns specs but cannot log in.
 - Keys live in `.env` (gitignored). `.mcp.json` and `opencode.json` are versioned because
   they hold no secret.
+
+### One-time rotation for an existing local setup
+
+`make env` never touches an existing `.env`, so older secrets stay until you change them.
+
+1. In `blt-project/.env`: set new random values for `POSTGRES_PASSWORD`, `S3_SECRET_KEY`,
+   `GITEA_PASSWORD` and a non-`django-insecure` `SECRET_KEY` (`openssl rand -hex 16`);
+   add `MINIO_RO_ACCESS_KEY`, `MINIO_RO_SECRET_KEY` and `GITEA_ALLOWED_REPOS`.
+2. Postgres and MinIO keep the password they were created with. Either run
+   `docker compose down -v` (wipes all local data, and also recreates the Gitea bot
+   without admin), or change them in place (`ALTER USER`, `mc admin user`).
+3. Recreate the MCP role with the new password: rerun the command in "Running it".
+4. In the BLT `.env`: point `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` at the read-only user,
+   and update `BLT_PG_PASSWORD`.
+5. If the old `blt_mcp` password or any JWT was ever exposed to an MCP client, treat it as
+   leaked: the new `SECRET_KEY` invalidates all issued tokens.
 
 ## Troubleshooting
 
