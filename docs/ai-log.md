@@ -93,7 +93,7 @@ entry). The per-letter assignment was not written down in the repository.
 **Deviation kept on purpose:** one API class per URL, not one per resource, to keep the
 published paths, operation ids and schema.
 
-**Verified (by the orchestrator):** 161 tests at 96.86% coverage, ruff, `manage.py check`,
+**Verified (by the orchestrator):** 165 tests at 96.74% coverage, ruff, `manage.py check`,
 `makemigrations --check`, OpenAPI schema validation with no warnings, React typecheck and
 build, `docker compose config -q`.
 

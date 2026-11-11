@@ -73,8 +73,11 @@ idempotent publish claim, throttles, least-privilege Gitea bot) is described in
 ## Why Gitea
 
 It gives a local issue tracker for the GenAI flow in Compose (port 3000). A management
-command creates the demo repository and four issues, and a one-shot Compose service runs it
-on every `up` (idempotent). The adapter (`specs/gitea.py`) is small enough to add another
+command creates the project repository, adds `ballast` and `lane` as collaborators (their
+accounts come from the Compose init step), and creates the issues: four feature requests, one
+issue per task assigned to them (same title and assignee, shared data in
+`tasks/seed_data.py`), and a last one with no task, kept for trying the spec flow. A one-shot
+Compose service runs it on every `up` (idempotent). The mirroring is seed data, not a live sync. The adapter (`specs/gitea.py`) is small enough to add another
 tracker.
 
 ## Limits

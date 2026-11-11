@@ -15,7 +15,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 161 passed, 96.86% coverage (80% floor) |
+| pytest | 165 passed, 96.74% coverage (80% floor) |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -61,6 +61,10 @@ console errors, warnings or failed requests. It is a manual script, not part of 
 - **UI aligned with ballastlane.com.** Tokens measured in a browser (Space Grotesk and IBM
   Plex Mono, orange primary button with ink text, 8/10 px radii, dark footer) applied to both
   clients; 60 computed-style checks and the WCAG pairs pass. Table in `blt-project/README.md`.
+- **Seed.** Three users (`fernando`, `ballast`, `lane`, password `blt2026`) and 19 tasks. Gitea
+  has matching accounts and 13 issues: the tasks of `ballast` and `lane` are mirrored as
+  assigned issues, and #13 ("Export the task list to CSV") is left without a task to try the
+  spec flow. The mirroring is seed data, not a live sync.
 - **New feature: spec → tasks.** `POST /api/v1/specs/{id}/tasks/`, a React dialog, and the MCP
   tool `create_tasks_from_spec` (draft unless `confirm=true`). No new model call.
 
