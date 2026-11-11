@@ -1,7 +1,7 @@
-# O projeto é um repositório independente, como ana-api/ e logus-api/ no ANA.
+# The product is an independent repository, like ana-api/ and logus-api/ in ANA.
 blt-project/
 
-# Credenciais locais
+# Local credentials
 .env
 .env.*
 !.env.example
@@ -27,7 +27,7 @@ codegraph/**/*.db-wal
 **/htmlcov/
 **/.coverage
 
-# Artefatos locais
+# Local artifacts
 *.log
 .DS_Store
 *.swp

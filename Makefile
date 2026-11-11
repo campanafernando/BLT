@@ -10,7 +10,7 @@ web:
 	cd blt-project && make web
 
 htmx:
-	@echo "Cliente HTMX: http://127.0.0.1:8000/app/ (a API precisa estar rodando)"
+	@echo "HTMX client: http://127.0.0.1:8000/app/ (the API must be running)"
 
 test:
 	cd blt-project && make test
