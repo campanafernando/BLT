@@ -1,89 +1,85 @@
-# BLT architecture
+# BLT architecture — decisions
 
-## Overview
-
-```
-                    ┌──────────────────────────┐
-  React (Vite) ────▶│  Django API + DRF + JWT  │
-                    │  views → services        │
-  HTMX + Alpine ───▶│        → selectors       │
-  (server-rendered) │        → models          │
-                    └────────────┬─────────────┘
-                                 │
-                     Postgres ◀──┴──▶ Redis ──▶ Celery
-                                 │
-                              Gitea (issues)
-```
-
-Both clients use the **same service layer**. The API returns JSON; the `hypermedia` app
-renders HTML. No business rule is duplicated. The spec flow talks to Gitea through a
-small adapter (`api/specs/gitea.py`).
-
-## API layers
-
-| Layer | File | Responsibility |
-|---|---|---|
-| Model | `tasks/models.py` | Data invariants, indexes, `is_overdue` |
-| Selector | `tasks/selectors.py` | Which rows the user may see; queries |
-| Filter | `tasks/filters.py` | Status, date and search filters |
-| Service | `tasks/services.py` | Create, update, complete, reopen, assign |
-| Serializer | `tasks/serializers.py` | Input and output contract |
-| View | `tasks/views.py` | Validate input, call a service, respond |
-| Permission | inline in the view | Only the creator deletes |
-
-The view does not know the ORM. The serializer does not decide a rule. The template does
-not calculate anything.
+Why the project is built this way. For how the code is laid out today (layers, service and
+selector names, endpoints, GenAI flow) read
+[`blt-project/docs/architecture.md`](../blt-project/docs/architecture.md). The MCP topology
+and the security model are in [`mcp.md`](../blt-project/docs/mcp.md).
 
 ## Why two clients
 
-The role uses HTMX + Alpine as the SSR default and React for legacy interfaces. BLT
-demonstrates both halves over one domain:
+The target stack uses HTMX + Alpine as the server-rendered default and React for legacy
+interfaces. BLT shows both halves over one domain:
 
-- `web/` — React SPA, server state with TanStack Query, forms with React Hook Form.
+- `web/` — React SPA, server state in TanStack Query, forms in React Hook Form.
 - `hypermedia/` — Django pages, HTMX partials, Alpine for local UI state.
 
-The architectural point: **the rule exists once**. If the React client is removed, the API
-remains; if the API becomes public, the HTMX client remains.
+The point is that **the rule exists once**. If the React client is removed the API
+remains; if the API is dropped the HTMX client still works. Both call the same services and
+selectors; the delete rule is written only in `task_delete`, and
+`hypermedia/tests/test_delete_rule.py` checks the HTMX path returns its message with 403.
 
-## Authentication
+## Why layers, and why not more
 
-- API: JWT (access 30 min, refresh 7 days, rotation and blacklist).
-- HTMX: Django session, CSRF in the form and in `hx-headers`.
-- Both coexist in the same project. The demo user serves both.
+Views validate, services decide, selectors scope, models keep invariants. There is no
+repository, use-case or DTO layer: they added ceremony without a rule to put in them. The
+service and selector names follow the HackSoft styleguide.
 
-Documented trade-off: the refresh token lives in `localStorage` in React. In production
-the correct approach is an `HttpOnly` cookie with `SameSite` and CSRF; BLT keeps the API
-stateless to stay simple. See `blt-project/docs/ai/03-decisions.md`.
+One deliberate deviation: the styleguide groups an endpoint family in one API class; here
+there is **one `APIView` per URL**. It keeps the published paths, operation ids and OpenAPI
+component names unchanged, and "what does `POST /tasks/1/complete/` do" is answered by
+reading about 15 lines. The cost is more classes.
 
-## Queue
+## Why `APIView` and not `ViewSet`
 
-Celery uses Redis as broker and backend. Two jobs:
+A ViewSet hides the endpoint map behind a router. A class with one method and one
+`@extend_schema` is explicit in review.
 
-- `notify_assignment` — email (console locally) when a task is assigned.
-- `send_due_soon_digest` — daily summary of tasks due tomorrow.
+## Why 404 for another user's task
 
-Sending is scheduled with `transaction.on_commit`: if the transaction fails, no email is
-sent for a task that does not exist. In tests, `CELERY_TASK_ALWAYS_EAGER=True`.
+Detail lookups use the visibility selector, so a stranger gets 404, not 403, and cannot
+confirm the task exists. Only delete is restricted to the creator.
 
-## Data
+## Why `is_overdue` is derived
 
-`Task` stores `status`, `due_date` and `completed_at` separately. `is_overdue` is derived,
-not stored: it avoids a nightly write job and inconsistent data. The cost is computing it
-on read — irrelevant at this volume, and documented.
+Storing it needs a nightly job and can go stale. The cost is computing it on read, which is
+irrelevant at this volume.
 
-`assigned_to` uses `PROTECT`: deleting a user with assigned tasks fails instead of
-erasing history.
+## Why notifications use `on_commit`
 
-## Gitea
+A rolled-back transaction must not leave an e-mail for a task that never existed. The API
+returns 201 before the e-mail leaves; a slow or dead broker does not block the request.
 
-Gitea provides the issue tracker for the GenAI flow and runs in Compose on port 3000. A
-management command creates the demo repository and four issues; a Compose one-shot service
-runs it on every `up` (idempotent). The API accepts a token or basic auth, so the local
-demo needs no token provisioning.
+## Why two authentication mechanisms
 
-## Known limits
+React uses JWT (access 30 min, refresh 7 days, rotation and blacklist); HTMX uses the Django
+session with CSRF. Both coexist. The refresh token in `localStorage` is a documented
+trade-off: production should use an `HttpOnly` cookie with `SameSite` and CSRF, or a
+backend-for-frontend. See `blt-project/docs/ai/03-decisions.md`.
 
-- No multitenancy. Every task belongs to one user (creator or assignee).
+## Why SQLite by default
+
+A reviewer runs `make setup && make test` without Docker. Compose runs PostgreSQL, and no
+feature depends on Postgres-specific SQL.
+
+## Why the spec flow is bounded
+
+One fixed task, no free-form prompt: the input is a Gitea issue URL, the output is a JSON
+contract, anything else is a 502. The value is the contract around the model call.
+Publishing and task creation are separate, explicit actions; creating tasks from a spec
+adds no LLM call. Hardening (repository allowlist, plain-text rendering of model output,
+idempotent publish claim, throttles, least-privilege Gitea bot) is described in
+[`mcp.md`](../blt-project/docs/mcp.md) and the project architecture doc.
+
+## Why Gitea
+
+It gives a local issue tracker for the GenAI flow in Compose (port 3000). A management
+command creates the demo repository and four issues, and a one-shot Compose service runs it
+on every `up` (idempotent). The adapter (`specs/gitea.py`) is small enough to add another
+tracker.
+
+## Limits
+
+- No multitenancy: a task belongs to its creator and one assignee.
 - No attachments, comments or change history.
 - `hypermedia` has no inline editing and no drag-and-drop.
-- The spec flow supports one tracker (Gitea). The adapter is small enough to add another.
+- One tracker (Gitea) is supported.

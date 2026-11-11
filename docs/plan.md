@@ -1,6 +1,6 @@
 # Plan — BLT
 
-Target date: Friday, 2026-11-13. Today: Tuesday, 2026-11-10.
+Target date: Friday, 2026-11-13. Updated: Wednesday, 2026-11-11.
 
 ## Acceptance criteria
 
@@ -16,7 +16,7 @@ Target date: Friday, 2026-11-13. Today: Tuesday, 2026-11-10.
 - [x] OpenAPI at `/api/docs/`
 - [x] React client with CRUD, filters and responsiveness
 - [x] Bonus: HTMX + Alpine over the same service layer
-- [x] GenAI: spec from a Gitea issue, with publish back to Gitea
+- [x] GenAI: spec from a Gitea issue, with publish back to Gitea and tasks from the spec
 - [x] MCP servers for CodeGraph, Postgres, MinIO and specs
 - [x] Local delivery checks
 - [ ] Public deployment
@@ -31,7 +31,8 @@ Target date: Friday, 2026-11-13. Today: Tuesday, 2026-11-10.
 | 3 | React: login, board, form, filters | done |
 | 4 | HTMX + Alpine: partials, modal, confirmation | done |
 | 5 | Spec from issue + Gitea + MCP | done |
-| 6 | English pass, demo rehearsal, deployment | in progress |
+| 6 | Audit and refactor: HackSoft layers, security hardening, UI cleanup, tasks from a spec | done |
+| 7 | Demo rehearsal, deployment | in progress |
 
 ## Risks
 

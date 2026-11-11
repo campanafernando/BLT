@@ -10,7 +10,7 @@ service layer.
 
 | Repository | Contents |
 |---|---|
-| `BLT` | Orchestration, documentation, delivery plan, AI log and CodeGraph snapshots |
+| `BLT` | Orchestration, documentation, delivery plan and AI log; MCP wiring points into `blt-project` |
 | [`blt-project`](https://github.com/campanafernando/blt-project) | `api/` (Django), `web/` (React) and `hypermedia/` (HTMX + Alpine) |
 
 `blt-project/` is an independent Git repository inside this folder, like `ana-api/` and
@@ -21,13 +21,15 @@ service layer.
 ```sh
 cp .env.example .env          # fill the MCP credentials
 cd blt-project
-cp .env.example .env
-make setup                    # uv + npm + migrate + seed
+make setup                    # .env with generated secrets, uv, npm, migrate, seed
 make api                      # http://127.0.0.1:8000
 make web                      # http://127.0.0.1:5173  (another terminal)
 ```
 
-Demo credentials: `demo` / `demo12345`.
+`make env` in `blt-project` creates its `.env` with random secrets and never overwrites an
+existing one. Demo credentials, seeded and not shown on the login pages: `demo` /
+`demo12345`. Details, endpoints and `GITEA_ALLOWED_REPOS`:
+[`blt-project/README.md`](blt-project/README.md).
 
 With Docker (API, web, Postgres, Redis, Mailpit, Gitea):
 
@@ -40,24 +42,26 @@ make up                       # Gitea at http://localhost:3000
 
 | Document | Subject |
 |---|---|
-| [`docs/HANDOFF.md`](docs/HANDOFF.md) | Current state, decisions and next step |
-| [`docs/architecture.md`](docs/architecture.md) | Boundaries between API, React and HTMX |
+| [`docs/HANDOFF.md`](docs/HANDOFF.md) | Current state, open items and next steps |
+| [`docs/architecture.md`](docs/architecture.md) | Decisions: why the project is built this way |
 | [`docs/plan.md`](docs/plan.md) | Delivery plan and acceptance criteria |
-| [`docs/ai-log.md`](docs/ai-log.md) | Record of AI tooling usage |
 | [`docs/tasks/mvp.md`](docs/tasks/mvp.md) | Minimum functional scope |
-| [`docs/mcp.md`](docs/mcp.md) | MCP topology and the FRETE-E gateway comparison |
-| [`blt-project/README.md`](blt-project/README.md) | How to run, endpoints and decisions |
+| [`docs/ai-log.md`](docs/ai-log.md) | Record of AI tooling usage |
+| [`docs/mcp.md`](docs/mcp.md) | MCP topology, security model, FRETE-E gateway comparison |
+
+Product documentation (run, endpoints, code layout, GenAI flow, demo script) lives in
+[`blt-project/README.md`](blt-project/README.md) and `blt-project/docs/`.
 
 ## MCP (bonus)
 
-The orchestrator exposes five MCP connections, each with its own credential:
+This workspace exposes five MCP connections, each with its own credential:
 
 | Server | Source | Mode |
 |---|---|---|
 | `codegraph-api` / `codegraph-web` | indexes of `blt-project/api` and `web` | read |
-| `postgres-blt` | Compose Postgres | read-only (`blt_mcp`) |
-| `minio-blt` | Compose MinIO | read-only (no `put`/`delete`) |
-| `blt-specs` | `blt-project` spec flow | read + publish issue |
+| `postgres-blt` | Compose Postgres | read-only (`blt_mcp`: `tasks_task`, `specs_spec`, view `mcp_users`) |
+| `minio-blt` | Compose MinIO | read-only user, no `put`/`delete` tool |
+| `blt-specs` | `blt-project` spec flow | read; writes only an issue (publish) or tasks (`create_tasks_from_spec`, `confirm=true`) |
 
 Configuration in [`opencode.json`](opencode.json) and [`.mcp.json`](.mcp.json); launchers
 in `.opencode/bin/`; MinIO server in `mcp_servers/`. The design, the FRETE-E gateway

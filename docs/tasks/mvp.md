@@ -12,7 +12,8 @@ what is late, so I do not miss deadlines and know who owns what.
 3. Create a task with title, description, due date and assignee.
 4. Edit, complete and reopen.
 5. Delete a task I created.
-6. Generate an implementation spec from a Gitea issue and publish it back as an issue.
+6. Generate an implementation spec from a Gitea issue, publish it back as an issue, and
+   turn chosen steps into tasks.
 
 ## Rules
 
