@@ -18,18 +18,15 @@
       },
       "postgres-blt": {
         "type": "local",
-        "command": ["bash", ".opencode/bin/postgres-mcp.sh"],
-        "enabled": true
+        "command": ["bash", ".opencode/bin/postgres-mcp.sh"]
       },
       "minio-blt": {
         "type": "local",
-        "command": ["bash", ".opencode/bin/minio-mcp.sh"],
-        "enabled": true
+        "command": ["bash", ".opencode/bin/minio-mcp.sh"]
       },
       "blt-specs": {
         "type": "local",
-        "command": ["bash", "blt-project/mcp_server/run.sh"],
-        "enabled": true
+        "command": ["bash", "blt-project/mcp_server/run.sh"]
       }
     }
   }
