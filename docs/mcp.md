@@ -75,9 +75,10 @@ internal implementations and the client talks to a single endpoint that resolves
   with a policy scoped to the project bucket (list and get, no put or delete). The built-in
   `readonly` policy is not used: it cannot list a bucket. It never uses the root keys.
 - `blt-specs` writes only issues, only in `GITEA_ALLOWED_REPOS`, and only with Gitea
-  credentials. The Gitea bot is not an admin and the token the API uses has only the
-  `write:issue` scope; the one-shot `gitea-seed` creates the repository with the bot's
-  password instead, so no long-lived token can create repositories.
+  credentials. The Gitea bot is not an instance admin, but its token has every scope: this is a
+  local test stack where the app should use the whole Gitea API. Tighten the scopes
+  (for example `write:issue`) before any shared deployment; `GITEA_ALLOWED_REPOS` already
+  limits which repositories the app touches.
 - Compose services get an explicit `environment:` each, not the whole `.env`. The worker
   and beat see no AI, Gitea or storage secrets; only the API (and the one-shot
   `gitea-seed`) see Gitea.

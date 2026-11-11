@@ -15,7 +15,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 160 passed, 96.86% coverage (80% floor) |
+| pytest | 161 passed, 96.86% coverage (80% floor) |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -30,7 +30,9 @@ Postgres role `blt_mcp` reads `tasks_task`, `specs_spec` and `mcp_users` and is 
 `auth_user`, the token blacklist and writes. The MinIO read-only user lists and reads the
 bucket and is denied writes and deletes.
 
-Not verified: the React and HTMX flows in a browser (no driver available).
+Browser smoke test (headless Chromium, desktop and 390 px): React login, board, create, filter and
+the Specs tab; HTMX login, new-task dialog, assignee select, filter, complete and delete. No
+console errors, warnings or failed requests. It is a manual script, not part of the repository.
 
 ## What changed
 
@@ -39,8 +41,8 @@ Not verified: the React and HTMX flows in a browser (no driver available).
   idempotent. Model output is rendered as plain text in the issue Markdown. `/auth/users/`
   returns only id and names; `/specs/config/` only `ai_enabled` and `publish_enabled`.
   `spec_publish` throttle (30/h) and the `spec` throttle only on `POST`. `NUM_PROXIES`, and
-  Nginx overwrites `X-Forwarded-For`. The Gitea bot is not an admin (the runtime
-  token only has `write:issue`; the one-shot seed bootstraps with the bot's password). Per-service env in Compose. The Postgres MCP role sees
+  Nginx overwrites `X-Forwarded-For`. The Gitea bot is not an instance admin; its token has every scope on purpose (local test
+  stack), and `GITEA_ALLOWED_REPOS` limits what the app touches. Per-service env in Compose. The Postgres MCP role sees
   `tasks_task`, `specs_spec` and the `mcp_users` view; the MinIO MCP uses a read-only user with a bucket-scoped list/get policy (the built-in
   `readonly` policy cannot list);
   the `cli` MCP user is inactive with an unusable password. `make env` generates random
@@ -64,16 +66,13 @@ Reasons: [`architecture.md`](architecture.md).
 
 ## Open items
 
-- Tailwind, `class-variance-authority`, `clsx` and `tailwind-merge` against the
-  "no UI framework" rule in `AGENTS.md`: needs a decision.
 - `unblock_account()` in `specs/gitea.py` is probably redundant; validate on a fresh Gitea
   volume.
-- `ensure_repo` is not covered by the allowlist.
 - `Spec` does not use `BaseModel`.
 - Fonts still load from Google Fonts.
 - React filters are not in the URL.
-- No browser or E2E test of the React and HTMX flows; no React component tests.
-- `seed_demo` bypasses the services on purpose.
+- No automated browser or React component tests (the smoke test above is manual).
+- `seed` bypasses the services on purpose.
 - A `pending` publish marker needs a manual reset if the process dies mid-publish.
 - No public deployment. Refresh token in `localStorage` (documented trade-off). MinIO needs
   a local build. GitHub Actions is disabled; checks run locally.
@@ -82,9 +81,8 @@ Reasons: [`architecture.md`](architecture.md).
 
 ## Next steps
 
-1. Walk through both clients in a browser and record a five-minute backup of
+1. Record a five-minute backup of
    `blt-project/docs/demo.md`.
-2. Decide on Tailwind (see Open items).
-3. Publish a demo (Railway or a VPS) with seed data and the sample issues; run
+2. Publish a deployment (Railway or a VPS) with seed data and the sample issues; run
    `manage.py check --deploy` first.
-4. Pick items from the GenAI backlog.
+3. Pick items from the GenAI backlog.

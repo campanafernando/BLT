@@ -93,16 +93,17 @@ entry). The per-letter assignment was not written down in the repository.
 **Deviation kept on purpose:** one API class per URL, not one per resource, to keep the
 published paths, operation ids and schema.
 
-**Verified (by the orchestrator):** 160 tests at 96.86% coverage, ruff, `manage.py check`,
+**Verified (by the orchestrator):** 161 tests at 96.86% coverage, ruff, `manage.py check`,
 `makemigrations --check`, OpenAPI schema validation with no warnings, React typecheck and
 build, `docker compose config -q`.
 
 **Live run (same day, after the merge).** The stack was recreated from scratch
 (`down -v`, with a database and Gitea backup first) and exercised end to end. It found
 three things that tests with mocks had not:
-- the Gitea seed got 403: creating a repository needs the `write:user` scope. Instead of
-  widening the runtime token, the one-shot seed now bootstraps with the bot's password and
-  the API token keeps only `write:issue`;
+- the Gitea seed got 403: creating a repository needs the `write:user` scope. I first
+  kept the runtime token narrow (`write:issue`) and let the seed use the bot's password;
+  the owner then decided the local stack should expose every scope so the app can use the
+  whole Gitea API, so the token is `all` again and the repository allowlist is the guard;
 - the MinIO read-only user could not list the bucket, because the built-in `readonly`
   policy has no `ListBucket`; it now has a policy scoped to the project bucket (list and
   get, and writes and deletes were checked to be denied);
