@@ -15,7 +15,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 165 passed, 96.74% coverage (80% floor) |
+| pytest | 181 passed, 96.75% coverage (80% floor) |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -65,6 +65,13 @@ console errors, warnings or failed requests. It is a manual script, not part of 
   has matching accounts and 13 issues: the tasks of `ballast` and `lane` are mirrored as
   assigned issues, and #13 ("Export the task list to CSV") is left without a task to try the
   spec flow. The mirroring is seed data, not a live sync.
+- **Gitea access.** The local Gitea login is `blt@mail.com` / `blt2026` (user `blt`), the same
+  password as the BLT users; `ballast` and `lane` share it in Gitea too. Defaults live in
+  `.env.example` and `compose.yaml`.
+- **Task table.** One fixed grid in both clients (React and HTMX): columns measured identical
+  across rows at 1440, 1100 and 1024 px, stacked cards below 1024 px, per-row differences shown
+  as captions, avatars, tags and a row hover. A browser script with deliberately uneven rows
+  passes 56 checks.
 - **Favicon and one-command start.** A checklist-mark favicon (SVG, ICO, touch icon) in both
   clients, and `make up` that waits for the seed and prints the addresses and the three users.
 - **New feature: spec → tasks.** `POST /api/v1/specs/{id}/tasks/`, a React dialog, and the MCP

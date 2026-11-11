@@ -93,7 +93,7 @@ entry). The per-letter assignment was not written down in the repository.
 **Deviation kept on purpose:** one API class per URL, not one per resource, to keep the
 published paths, operation ids and schema.
 
-**Verified (by the orchestrator):** 165 tests at 96.74% coverage, ruff, `manage.py check`,
+**Verified (by the orchestrator):** 181 tests at 96.75% coverage, ruff, `manage.py check`,
 `makemigrations --check`, OpenAPI schema validation with no warnings, React typecheck and
 build, `docker compose config -q`.
 
@@ -154,3 +154,25 @@ specificity clash) was fixed along the way; no dark theme.
 
 **Lesson:** "follows the site" is only a claim until the numbers are read from the site and
 compared with the running app.
+
+## 2026-11-11 — Task table alignment
+
+**Goal:** the screenshot showed status badges drifting per row, the edit icon sliding when a
+task could not be deleted, and the same labels repeated on every row.
+
+**Method:** I named the causes from the screenshot (no status column, an actions cell whose
+width depended on permissions, per-row labels), wrote one spec for both clients (fixed grid,
+what each per-row difference looks like, tooltips, hover) and gave it to two agents in
+parallel. The check was a script, not a look: it creates deliberately uneven rows (a title of
+140 characters, no date, no assignee, overdue, due today and tomorrow, done, created by someone
+else) and measures every cell's position in both clients at five widths.
+
+**Result and a correction:** 56 checks pass. Reading the screenshots side by side still found
+three inconsistencies the numbers did not (HTMX dates in a different font and without a leading
+zero, and an extra badge that made overdue rows taller), which I fixed afterwards.
+
+**Gitea login:** the Gitea bot now signs in with `blt@mail.com` / `blt2026`. Gitea refuses
+short passwords by default, so `MIN_PASSWORD_LENGTH` was lowered for the local stack; the email
+of an existing account cannot be changed by the CLI, so the Gitea volume was recreated and the
+seed rebuilt the repository and the 13 issues.
+
