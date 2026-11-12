@@ -41,7 +41,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 189 passed, 95.62% coverage (80% floor), run 2026-11-12 on `blt-project@7956a12` |
+| pytest | 191 passed, 95.62% coverage (80% floor), run 2026-11-12 after the lint round |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -77,7 +77,7 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
   (the old text claimed the opposite); why the spec flow and MCP exist; `AGENTS.md` fixed;
   no password in any file; `PRESENTATION.md` removed.
 - Clean clone (`/tmp`, no AI key, no Docker): `make setup` + `make test` found a test that only passed with the AI key present (503 before URL validation); fixed in `4de40bd`, then 189 passed, 95.62%. The Docker stack and the browser were not re-run this round.
-- Known and left: `mcp_server/` has ruff findings that predate this round (`make lint` covers `api` only).
+- `make lint` now covers `mcp_server/` as well (E402 allowed only in `server.py`, where `django.setup()` must run first), and the API tests cover a 201-character title on create and update.
 
 ## What changed
 

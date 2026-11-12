@@ -48,7 +48,7 @@ A task that crosses `api` and `web` goes to `cross-stack` first (contract first,
 | web | `npm --prefix web run typecheck` and `npm --prefix web run build` (there is no web test script) |
 | full stack | `make up` (Compose; Gitea at :3000) |
 
-Baseline recorded in `docs/HANDOFF.md` (2026-11-11): 189 tests passed, 95.62% coverage, ruff, schema and builds clean.
+Baseline recorded in `docs/HANDOFF.md` (2026-11-11): 191 tests passed, 95.62% coverage, ruff, schema and builds clean.
 Re-run `make check` before trusting it.
 
 ## State and freeze
