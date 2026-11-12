@@ -70,7 +70,7 @@ console errors, warnings or failed requests. It is a manual script, not part of 
   launchers), mounted by Compose as `/run/secrets/*` only into the services that need them;
   `make env` creates them and migrates any value still in an older `.env`. Verified: a scan of
   `docker inspect` of every container finds none of the secret values. Real secrets never reached
-  the git history; the shared password (`blt2026`) did, before this change, and is still there.
+  the git history; the shared password did, before this change, and is still there.
 - **Gitea access.** The local Gitea login is `blt@mail.com` plus the shared password (user `blt`), the same
   password as the BLT users; `ballast` and `lane` share it in Gitea too. Defaults live in
   `.env.example` and `compose.yaml`.
