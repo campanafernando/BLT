@@ -48,6 +48,8 @@ make up                       # Gitea at http://localhost:3000
 | [`docs/tasks/mvp.md`](docs/tasks/mvp.md) | Minimum functional scope |
 | [`docs/ai-log.md`](docs/ai-log.md) | Record of AI tooling usage |
 | [`docs/mcp.md`](docs/mcp.md) | MCP topology, security model, FRETE-E gateway comparison |
+| [`docs/vault/`](docs/vault/README.md) | Knowledge base for agents: layout, domain rules, contracts, spec flow, decisions |
+| [`docs/fefo/ADOPTION.md`](docs/fefo/ADOPTION.md) | Runbook to turn BLT into a FEFO workspace (prepared, not yet executed) |
 
 Product documentation (run, endpoints, code layout, GenAI flow, demo script) lives in
 [`blt-project/README.md`](blt-project/README.md) and `blt-project/docs/`.
@@ -63,6 +65,7 @@ This workspace exposes five MCP connections, each with its own credential:
 | `minio-blt` | Compose MinIO | read-only user, no `put`/`delete` tool |
 | `blt-specs` | `blt-project` spec flow | read; writes only an issue (publish) or tasks (`create_tasks_from_spec`, `confirm=true`) |
 
+Agent rules in [`AGENTS.md`](AGENTS.md) and [`AGENTS.local.md`](AGENTS.local.md) (BLT specialists, hard stops).
 Configuration in [`opencode.json`](opencode.json) and [`.mcp.json`](.mcp.json); launchers
 in `.opencode/bin/`; MinIO server in `mcp_servers/`. The design, the FRETE-E gateway
 comparison and the security model are in [`docs/mcp.md`](docs/mcp.md).
@@ -80,5 +83,5 @@ comparison and the security model are in [`docs/mcp.md`](docs/mcp.md).
 
 - Working branch: `main` (new project, no environments).
 - Never commit or publish without explicit authorization.
-- Secrets only in `.env`; `.env.example` documents every key.
+- Plain configuration in `.env`; passwords and keys are files in `secrets/`. `.env.example` documents every key.
 - English in code, documentation and UI; Portuguese only in the personal study notes.

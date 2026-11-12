@@ -1,0 +1,50 @@
+{
+  "fefo": 1,
+  "name": "BLT",
+  "generated_at": null,
+  "provider": {
+    "model": "opencode-go/deepseek-v4.1-flash"
+  },
+  "harnesses": ["opencode", "claude"],
+  "repos": [
+    {
+      "name": "api",
+      "path": "blt-project/api",
+      "role": "api",
+      "stack": "django",
+      "mcp": "codegraph-api",
+      "commands": {
+        "test": "make -C blt-project test",
+        "lint": "make -C blt-project lint",
+        "build": "make -C blt-project check"
+      }
+    },
+    {
+      "name": "web",
+      "path": "blt-project/web",
+      "role": "web",
+      "stack": "react",
+      "mcp": "codegraph-web",
+      "commands": {
+        "test": "",
+        "lint": "npm --prefix blt-project/web run typecheck",
+        "build": "npm --prefix blt-project/web run build",
+        "run": "npm --prefix blt-project/web run dev"
+      }
+    }
+  ],
+  "mcp_servers": {
+    "postgres-blt": {
+      "type": "local",
+      "command": ["bash", ".opencode/bin/postgres-mcp.sh"]
+    },
+    "minio-blt": {
+      "type": "local",
+      "command": ["bash", ".opencode/bin/minio-mcp.sh"]
+    },
+    "blt-specs": {
+      "type": "local",
+      "command": ["bash", "blt-project/mcp_server/run.sh"]
+    }
+  }
+}

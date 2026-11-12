@@ -7,6 +7,10 @@ blt-project/
 !.env.example
 secrets/
 
+# FEFO local state
+.fefo/backups/
+.fefo/cache/
+
 # CodeGraph
 codegraph/**/*.db
 codegraph/**/*.db-shm

@@ -224,3 +224,37 @@ container's `docker inspect`, no tracked file and no commit contains the new val
 **Left on purpose:** the old password stays in the git history (now useless), and backups from
 before the rotation sit outside the repositories until they are deleted.
 
+
+---
+
+## 2026-11-12 — Preparing BLT to adopt the FEFO pattern
+
+**Goal:** structure BLT's agents and knowledge base so a later session can turn it into a FEFO
+workspace in place, with the base already updated. BLT only; `blt-project` stays frozen.
+
+**Tool:** OpenCode (Claude Sonnet 5.5). Read both repositories and FEFO's generator
+(`tools/fefo.py`) before writing anything, to learn what `fefo sync` overwrites and what it keeps.
+
+**Found:**
+- `sync` regenerates `AGENTS.md`, `opencode.json`, `.mcp.json` and `codegraph/README.md`. BLT's rules
+  lived in `AGENTS.md`, so a plain adoption would have deleted them.
+- `fefo add` snaps to the Git root, so `api` and `web` (one root, two indexes, two MCP names) cannot
+  be registered by the CLI; the stack guess for `blt-project` would be `infra`.
+- FEFO's `docs/architecture.md` collides with BLT's; its Django commands are not BLT's (pytest, make).
+- Stale text in BLT: a `codegraph/README.md` pointing to a script that does not exist, two broken
+  links in `docs/architecture.md`, "secrets only in `.env`" and "`blt-specs` writes only issues".
+
+**Accepted:** a hand-written manifest; a vault in FEFO's layout whose rules each cite a file and a
+test; two read-only specialists (`blt-domain`, `blt-genai`); the rules moved to `AGENTS.local.md`
+by the script at adoption time; a script that rehearses the whole adoption on a throwaway copy and
+refuses to apply on a dirty tree.
+
+**Corrected:** the vault's first draft claimed a test baseline I had not run; it now points to the
+HANDOFF record and says to re-run `make check`. Dates of D1–D8 were guessed; they now say they were
+distilled on 2026-11-12 from the build of 2026-11-10/11.
+
+**Discarded:** copying FEFO's whole template (it would overwrite README and `docs/`); extra skills and
+commands (the runbook and the vault carry the procedure); `fefo init` (it would guess the stack wrong).
+
+**Lesson:** read the generator's overwrite rules before deciding where knowledge lives; then prove the
+plan with a rehearsal instead of describing it.

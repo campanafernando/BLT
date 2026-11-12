@@ -33,6 +33,7 @@ Target date: Friday, 2026-11-13. Updated: Wednesday, 2026-11-11.
 | 5 | Spec from issue + Gitea + MCP | done |
 | 6 | Audit and refactor: HackSoft layers, security hardening, UI cleanup, tasks from a spec | done |
 | 7 | Demo rehearsal, deployment | in progress |
+| 8 | FEFO adoption: manifest, vault, specialists and rehearsal prepared; execution in a separate session (`fefo/ADOPTION.md`) | prepared |
 
 ## Risks
 

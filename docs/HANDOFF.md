@@ -1,6 +1,25 @@
 # Handoff — BLT
 
-Updated: 2026-11-11
+Updated: 2026-11-12
+
+## Next round: adopt FEFO (prepared, not executed)
+
+BLT is to become a FEFO workspace in place. The preparation is done and rehearsed on a throwaway
+copy; the execution is for a separate session, **after the submission is closed or when the user says
+go**. Start at [`fefo/ADOPTION.md`](fefo/ADOPTION.md); the knowledge base is [`vault/`](vault/README.md).
+
+| Prepared | Where |
+|---|---|
+| Manifest (`api`, `web`, 3 custom MCPs; hand-written, never `fefo init`) | `.fefo/workspace.json` |
+| Knowledge vault (layout, domain rules, contracts, spec flow, MCP and secrets, decisions D1–D13) | `docs/vault/` |
+| Specialists `blt-domain`, `blt-genai` (read-only) | `.opencode/agents/` |
+| BLT routing and hard stops, loaded through `opencode.json` `instructions` | `AGENTS.local.md` |
+| Rehearsal and apply script | `.opencode/bin/fefo-adopt.sh` |
+
+Rehearsal result (2026-11-12, `FEFO@63c94f7`): five MCP names identical before and after, `sync`
+leaves `AGENTS.local.md` and the vault untouched, `fefo doctor` 0 errors and the 2 expected warnings.
+Not done yet: the apply, the indexes through FEFO, the OpenCode restart and the per-server checks.
+Nothing was committed and nothing under `blt-project/` was touched.
 
 ## Delivery (from the company's e-mail)
 

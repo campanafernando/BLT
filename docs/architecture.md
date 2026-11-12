@@ -3,7 +3,7 @@
 Why the project is built this way. For how the code is laid out today (layers, service and
 selector names, endpoints, GenAI flow) read
 [`blt-project/docs/architecture.md`](../blt-project/docs/architecture.md). The MCP topology
-and the security model are in [`mcp.md`](../blt-project/docs/mcp.md).
+and the security model are in [`mcp.md`](mcp.md).
 
 ## Why two clients
 
@@ -68,7 +68,7 @@ contract, anything else is a 502. The value is the contract around the model cal
 Publishing and task creation are separate, explicit actions; creating tasks from a spec
 adds no LLM call. Hardening (repository allowlist, plain-text rendering of model output,
 idempotent publish claim, throttles, least-privilege Gitea bot) is described in
-[`mcp.md`](../blt-project/docs/mcp.md) and the project architecture doc.
+[`mcp.md`](mcp.md) and the project architecture doc.
 
 ## Why Gitea
 

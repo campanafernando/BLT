@@ -37,10 +37,11 @@ server-rendered client with HTMX + Alpine.js.
 
 ## MCP
 
-- One server per source; credentials in `.env`, never in `opencode.json` or `.mcp.json`.
+- One server per source. Plain configuration is in `.env`; passwords and keys are files in
+  `secrets/`. Neither goes in `opencode.json`, `.mcp.json` or the FEFO manifest.
 - `postgres-blt` and `minio-blt` are read-only by construction. Do not add a write tool
   without reviewing the contract and the database role.
-- `blt-specs` writes only issues, and only with Gitea credentials configured.
+- `blt-specs` writes only issues (with Gitea credentials configured) and, with `confirm=true`, tasks.
 - The scaling pattern is the FRETE-E gateway; here the launchers play the routing role.
 
 ## Forbidden
