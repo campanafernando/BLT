@@ -60,7 +60,7 @@ Browser smoke test (headless Chromium, desktop and 390 px): React login, board, 
 the Specs tab; HTMX login, new-task dialog, assignee select, filter, complete and delete. No
 console errors, warnings or failed requests. It is a manual script, not part of the repository.
 
-## Final round (2026-11-12, `blt-project@7956a12`, pushed)
+## Final round (2026-11-12, `blt-project@4de40bd`, pushed)
 
 Review of the styleguide use, then fixes, by `general` agents with owned file sets (backend, specs,
 docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to `blt-project` for FEFO.
@@ -76,6 +76,7 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
 - Docs: a "why a service layer" section and the real deviations from the HackSoft styleguide
   (the old text claimed the opposite); why the spec flow and MCP exist; `AGENTS.md` fixed;
   no password in any file; `PRESENTATION.md` removed.
+- Clean clone (`/tmp`, no AI key, no Docker): `make setup` + `make test` found a test that only passed with the AI key present (503 before URL validation); fixed in `4de40bd`, then 189 passed, 95.62%. The Docker stack and the browser were not re-run this round.
 - Known and left: `mcp_server/` has ruff findings that predate this round (`make lint` covers `api` only).
 
 ## What changed

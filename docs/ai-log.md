@@ -283,3 +283,5 @@ a doc promising a link in the 409 message the code does not return, and an MCP c
 
 **Lesson:** pinning the tracker URL in tests found a network call a mock had hidden; an agent's
 refusal on a freeze was correct behaviour, and the fix was to state the grant, not to bypass it.
+
+**Found only by a clean clone:** `test_create_rejects_invalid_url` passed here because the AI key exists on this machine and failed (503) without it. Neither the agents nor the reviewers could see it; a clone in `/tmp` without secrets did. Fixed by pinning `AI_ENABLED` in the test.
