@@ -25,8 +25,9 @@ restarts or reindexes on its own, and the owner of the data defines the contract
 ## Running it
 
 ```sh
-cp .env.example .env      # fill BLT_PG_PASSWORD and MINIO_SECRET_KEY
-                          # (MINIO_SECRET_KEY = MINIO_RO_SECRET_KEY, the read-only user)
+cp .env.example .env      # plain configuration
+mkdir -m 700 secrets      # then one file per secret, see .env.example:
+                          # blt_pg_password, minio_mcp_secret (= the read-only MinIO user's secret)
 
 # 1. Project database and MinIO
 cd blt-project
@@ -36,7 +37,7 @@ docker compose --profile storage up -d minio minio-init
 # 2. Read-only role (once)
 cd ..
 docker compose -f blt-project/compose.yaml exec -T db psql -U blt -d blt \
-  -v mcp_password="$(grep '^BLT_PG_PASSWORD=' .env | cut -d= -f2-)" \
+  -v mcp_password="$(cat secrets/blt_pg_password)" \
   -f - < mcp_servers/postgres-readonly.sql
 
 # 3. CodeGraph indexes (the launcher creates them if missing)
@@ -86,28 +87,26 @@ internal implementations and the client talks to a single endpoint that resolves
 - Keys live in `.env` (gitignored). `.mcp.json` and `opencode.json` are versioned because
   they hold no secret.
 
-### One-time rotation for an existing local setup
+### Rotating a secret
 
-`make env` never touches an existing `.env`, so older secrets stay until you change them.
+Every password and key is a file, not an environment variable, so a rotation is: replace the
+file, then recreate whatever stored the old value.
 
-1. In `blt-project/.env`: set new random values for `POSTGRES_PASSWORD`, `S3_SECRET_KEY`,
-   `GITEA_PASSWORD` and a non-`django-insecure` `SECRET_KEY` (`openssl rand -hex 16`);
-   add `MINIO_RO_ACCESS_KEY`, `MINIO_RO_SECRET_KEY` and `GITEA_ALLOWED_REPOS`.
-2. Postgres and MinIO keep the password they were created with. Either run
-   `docker compose down -v` (wipes all local data, and also recreates the Gitea bot
-   without admin), or change them in place (`ALTER USER`, `mc admin user`).
-3. Recreate the MCP role with the new password: rerun the command in "Running it".
-4. In the BLT `.env`: point `MINIO_ACCESS_KEY` / `MINIO_SECRET_KEY` at the read-only user,
-   and update `BLT_PG_PASSWORD`.
-5. If the old `blt_mcp` password or any JWT was ever exposed to an MCP client, treat it as
-   leaked: the new `SECRET_KEY` invalidates all issued tokens.
+1. `blt-project/secrets/*`: replace the file (`openssl rand -hex 16 > secrets/<name>`). Postgres
+   and MinIO keep the password they were created with, so either `docker compose down -v`
+   (wipes local data) or change it in place (`ALTER USER`, `mc admin user`), then `make up`.
+   Rotating `blt_password` also needs the Gitea accounts to be recreated (`down -v`).
+2. `secrets/blt_pg_password` here: replace it and rerun the command in "Running it" so the role
+   gets the new password. `secrets/minio_mcp_secret` must equal `blt-project/secrets/minio_ro_secret`.
+3. If the old `blt_mcp` password or any JWT was ever exposed to an MCP client, treat it as leaked:
+   a new `django_secret_key` invalidates all issued tokens.
 
 ## Troubleshooting
 
 | Symptom | Likely cause |
 |---|---|
 | `Missing .env` | copy `.env.example` at the BLT root |
-| Postgres 401 | role not created or password differs from `BLT_PG_PASSWORD` |
+| Postgres 401 | role not created or password differs from `secrets/blt_pg_password` |
 | MinIO ConnectionError | `storage` profile not running, or wrong endpoint port |
 | CodeGraph "index not found" | run `codegraph init` + `index` in the target repo |
 | `blt-specs` fails | run `make setup` in `blt-project`; Gitea must be up for issue tools |

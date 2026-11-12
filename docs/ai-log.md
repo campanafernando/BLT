@@ -93,7 +93,7 @@ entry). The per-letter assignment was not written down in the repository.
 **Deviation kept on purpose:** one API class per URL, not one per resource, to keep the
 published paths, operation ids and schema.
 
-**Verified (by the orchestrator):** 181 tests at 96.75% coverage, ruff, `manage.py check`,
+**Verified (by the orchestrator):** 186 tests at 96.76% coverage, ruff, `manage.py check`,
 `makemigrations --check`, OpenAPI schema validation with no warnings, React typecheck and
 build, `docker compose config -q`.
 
@@ -171,8 +171,29 @@ else) and measures every cell's position in both clients at five widths.
 three inconsistencies the numbers did not (HTMX dates in a different font and without a leading
 zero, and an extra badge that made overdue rows taller), which I fixed afterwards.
 
-**Gitea login:** the Gitea bot now signs in with `blt@mail.com` / `blt2026`. Gitea refuses
+**Gitea login:** the Gitea bot now signs in with `blt@mail.com` and the shared password. Gitea refuses
 short passwords by default, so `MIN_PASSWORD_LENGTH` was lowered for the local stack; the email
 of an existing account cannot be changed by the CLI, so the Gitea volume was recreated and the
 seed rebuilt the repository and the 13 issues.
+
+## 2026-11-11 — Passwords moved into secret files
+
+**Goal:** no password or key in code, docs, `.env`, tests or the container environment, keeping
+every current login working.
+
+**Design:** one mechanism instead of per-service tweaks: files in `secrets/`, mounted by Compose
+under `/run/secrets` and read by `config/secret_files.py` (the environment is only a fallback for
+CI). `make env` creates them and moves any value still in an old `.env` with the same value, so
+the existing logins and database volumes needed no change.
+
+**Checked, not assumed:** every migrated value was compared by hash with the old one; a scan of
+`docker inspect` for all 13 containers found no secret value; each service was listed to confirm
+it only reads what it needs (the worker does not see the shared password or the AI key); the
+three BLT logins, the Gitea logins and the Postgres MCP launcher all worked with the file values;
+production refuses to start without a Django key.
+
+**What it cannot fix:** the shared password was committed before this change, so it is in the
+history of both repositories on GitHub. Real secrets (database, Django key, MinIO, AI key) never
+were. Cleaning the history means rewriting and force-pushing a public repository, which needs an
+explicit decision.
 

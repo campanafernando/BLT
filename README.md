@@ -28,7 +28,7 @@ make web                      # http://127.0.0.1:5173  (another terminal)
 
 `make env` in `blt-project` creates its `.env` with random secrets and never overwrites an
 existing one. Seeded users, not shown on the login pages: `fernando`, `ballast` and `lane`, all with
-password `blt2026`. Details, endpoints and `GITEA_ALLOWED_REPOS`:
+the password in `blt-project/secrets/blt_password`. Details, endpoints and `GITEA_ALLOWED_REPOS`:
 [`blt-project/README.md`](blt-project/README.md).
 
 With Docker (API, web, Postgres, Redis, Mailpit, Gitea):

@@ -15,7 +15,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 181 passed, 96.75% coverage (80% floor) |
+| pytest | 186 passed, 96.76% coverage (80% floor) |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -61,11 +61,17 @@ console errors, warnings or failed requests. It is a manual script, not part of 
 - **UI aligned with ballastlane.com.** Tokens measured in a browser (Space Grotesk and IBM
   Plex Mono, orange primary button with ink text, 8/10 px radii, dark footer) applied to both
   clients; 60 computed-style checks and the WCAG pairs pass. Table in `blt-project/README.md`.
-- **Seed.** Three users (`fernando`, `ballast`, `lane`, password `blt2026`) and 19 tasks. Gitea
+- **Seed.** Three users (`fernando`, `ballast`, `lane`, shared password in `blt-project/secrets/blt_password`) and 19 tasks. Gitea
   has matching accounts and 13 issues: the tasks of `ballast` and `lane` are mirrored as
   assigned issues, and #13 ("Export the task list to CSV") is left without a task to try the
   spec flow. The mirroring is seed data, not a live sync.
-- **Gitea access.** The local Gitea login is `blt@mail.com` / `blt2026` (user `blt`), the same
+- **Secrets in files.** No password or key is in the repository, in `.env` or in a container's
+  environment. They are files in `blt-project/secrets/` (and `secrets/` here for the MCP
+  launchers), mounted by Compose as `/run/secrets/*` only into the services that need them;
+  `make env` creates them and migrates any value still in an older `.env`. Verified: a scan of
+  `docker inspect` of every container finds none of the secret values. Real secrets never reached
+  the git history; the shared password (`blt2026`) did, before this change, and is still there.
+- **Gitea access.** The local Gitea login is `blt@mail.com` plus the shared password (user `blt`), the same
   password as the BLT users; `ballast` and `lane` share it in Gitea too. Defaults live in
   `.env.example` and `compose.yaml`.
 - **Task table.** One fixed grid in both clients (React and HTMX): columns measured identical
@@ -85,6 +91,9 @@ Reasons: [`architecture.md`](architecture.md).
 - `unblock_account()` in `specs/gitea.py` is probably redundant; validate on a fresh Gitea
   volume.
 - `Spec` does not use `BaseModel`.
+- The shared password is in the git history of both repositories (it was committed before the
+  secrets change). Removing it needs a history rewrite and a force push, or a new password.
+- The Gitea token file lives in a named volume readable by the API and the seed containers.
 - Fonts still load from Google Fonts. No dark theme (the Ballast Lane site has one).
 - React filters are not in the URL.
 - No automated browser or React component tests (the smoke test above is manual).
