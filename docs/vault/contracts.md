@@ -1,6 +1,6 @@
 # Contracts — API and clients
 
-Verified 2026-11-12 against `blt-project@5222d7f`.
+Verified 2026-11-12 against `blt-project@7956a12`.
 
 ## Source of truth
 
@@ -29,8 +29,8 @@ One `APIView` per URL, on purpose (see `decisions.md`, D3). Pagination is `page`
 
 ## Errors
 
-DRF shape: `{"detail": "..."}` or `{"field": ["message", ...]}`. Services raise Django exceptions;
-`core/exceptions.py` converts them. The React client reads both shapes in `lib/api.ts::toError`.
+DRF shape: `{"detail": "..."}` or `{"field": ["message", ...]}`. Services raise Django exceptions (the one plain exception is `SpecAlreadyPublishedError`, 409);
+`core/exceptions.py` converts them. `GET /auth/users/` returns the `UserBrief` schema. The React client reads both shapes in `lib/api.ts::toError`.
 Do not invent a third shape.
 
 Status codes that carry meaning: 404 for a task or spec the caller may not see, 403 for

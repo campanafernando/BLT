@@ -1,6 +1,6 @@
 # Domain rules — tasks
 
-Verified 2026-11-12 against `blt-project@5222d7f`. If a row and the code disagree, the code wins:
+Verified 2026-11-12 against `blt-project@7956a12`. If a row and the code disagree, the code wins:
 fix the row and say so in `decisions.md`.
 
 Terms: a **task** has `status` (`todo`, `in_progress`, `done`), an optional `due_date`, one creator
@@ -20,7 +20,7 @@ Terms: a **task** has `status` (`todo`, `in_progress`, `done`), an optional `due
 | R8 | A past due date is accepted (backfill) and shown as overdue. | `services.task_create` | `test_create_with_past_due_date_is_allowed` |
 | R9 | The title is trimmed and not blank; `task_update` accepts only `TASK_UPDATE_FIELDS`. | `services.task_update` | `test_create_rejects_blank_title`, `test_update_rejects_fields_outside_the_whitelist` |
 | R10 | Services are keyword-only, atomic, call `full_clean()` and raise Django `ValidationError` / `PermissionDenied`; the DRF handler turns them into the API error shape. | `tasks/services.py`, `core/exceptions.py` | `test_services_are_keyword_only` |
-| R11 | The assignment e-mail is scheduled with `transaction.on_commit`: a rolled-back task sends nothing. The due-soon digest sends one e-mail per task due tomorrow and survives one failing send. | `services._notify`, `due_soon_digest_send` | `test_assignment_sends_email_after_commit`, `test_digest_continues_after_a_failed_send` |
+| R11 | The assignment e-mail is scheduled with `transaction.on_commit`: a rolled-back task sends nothing. The due-soon digest sends one e-mail per task due tomorrow and survives one failing send. | `services._notify`; `notifications.assignment_notify_send`, `notifications.due_soon_digest_send` | `test_assignment_sends_email_after_commit`, `test_digest_continues_after_a_failed_send` |
 
 ## Entry points that must reach the same rule
 

@@ -1,6 +1,6 @@
 # Layout and ownership
 
-Verified 2026-11-12 against `BLT@6b9b584` and `blt-project@5222d7f`.
+Verified 2026-11-12 against `BLT@6b9b584` and `blt-project@7956a12`.
 
 ## Two repositories, one product
 
@@ -32,7 +32,7 @@ wrong (`compose.yaml` makes it `infra`).
 | `web/src` (React, Tailwind over `index.css` tokens) | `web` | `frontend` → `form`, `table`, `api-layer`, `design`, `i18n` |
 | `mcp_server/` | none (Python, imports `api/` services) | `integration`; follow `api` rules |
 | `compose.yaml`, `infra/`, `scripts/`, `api/Dockerfile`, `web/Dockerfile`, `web/nginx.conf` | none | `infra` |
-| `docs/`, `GENAI.md`, `PRESENTATION.md`, `README.md` | none | frozen until the submission is closed |
+| `docs/`, `GENAI.md`, `README.md`, `AGENTS.md` | none | docs agent; no password value anywhere |
 
 A task that crosses `api` and `web` goes to `cross-stack` first (contract first, see `contracts.md`).
 
@@ -48,11 +48,12 @@ A task that crosses `api` and `web` goes to `cross-stack` first (contract first,
 | web | `npm --prefix web run typecheck` and `npm --prefix web run build` (there is no web test script) |
 | full stack | `make up` (Compose; Gitea at :3000) |
 
-Baseline recorded in `docs/HANDOFF.md` (2026-11-11): 186 tests passed, 96.76% coverage, ruff, schema and builds clean.
+Baseline recorded in `docs/HANDOFF.md` (2026-11-11): 189 tests passed, 95.62% coverage, ruff, schema and builds clean.
 Re-run `make check` before trusting it.
 
 ## State and freeze
 
-The submission deadline is Friday 2026-11-13 12:30 (Brazil); after it the work is frozen until
-further notice. While frozen: no edit, format, commit or push inside `blt-project/`. Only
+The submission deadline is Friday 2026-11-13 12:30 (Brazil). Until it, `blt-project/` may be edited
+on the user's explicit grant (given 2026-11-12 for the final refactor). After the submission is sent
+the work is frozen until further notice: no edit, format, commit or push inside `blt-project/`. Only
 `.codegraph/` (git-ignored) may change there, through `fefo index`.

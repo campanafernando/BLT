@@ -24,7 +24,7 @@ Nothing was committed and nothing under `blt-project/` was touched.
 ## Delivery (from the company's e-mail)
 
 One public repository only, `blt-project`, with the code, `GENAI.md` at the root and a
-presentation (`PRESENTATION.md`); no symlinks; deadline Friday 13 Nov, 12:30 (Brazil). After the
+presentation (written and sent separately by the user; the repository no longer carries one); no symlinks; deadline Friday 13 Nov, 12:30 (Brazil). After the
 submission the work is frozen until further notice. This repository is the optional companion
 described in `GENAI.md` and is not what gets sent.
 
@@ -41,7 +41,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 186 passed, 96.76% coverage (80% floor) |
+| pytest | 189 passed, 95.62% coverage (80% floor), run 2026-11-12 on `blt-project@7956a12` |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -59,6 +59,24 @@ bucket and is denied writes and deletes.
 Browser smoke test (headless Chromium, desktop and 390 px): React login, board, create, filter and
 the Specs tab; HTMX login, new-task dialog, assignee select, filter, complete and delete. No
 console errors, warnings or failed requests. It is a manual script, not part of the repository.
+
+## Final round (2026-11-12, `blt-project@7956a12`, pushed)
+
+Review of the styleguide use, then fixes, by `general` agents with owned file sets (backend, specs,
+docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to `blt-project` for FEFO.
+
+- Circular import removed: e-mail code moved to `tasks/notifications.py`; `services.py` imports
+  `notify_assignment` at the top.
+- `UserListApi` uses `selectors.assignee_list`; one brief user serializer (`UserList` schema → `UserBrief`).
+- `TaskInputSerializer` shared with `specs`; `assignee_field` defined once.
+- HTMX form no longer repeats the title length; the service rejects it (422, tested).
+- `specs`: `spec_generate`, `spec_publish`, keyword-only `spec_list`/`spec_get`, one 404 helper;
+  `SpecAlreadyPublishedError` in `core/exceptions.py` (services no longer import DRF).
+- Tests pin the tracker URL to `.invalid`; this exposed a test that called the network.
+- Docs: a "why a service layer" section and the real deviations from the HackSoft styleguide
+  (the old text claimed the opposite); why the spec flow and MCP exist; `AGENTS.md` fixed;
+  no password in any file; `PRESENTATION.md` removed.
+- Known and left: `mcp_server/` has ruff findings that predate this round (`make lint` covers `api` only).
 
 ## What changed
 

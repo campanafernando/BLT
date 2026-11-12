@@ -258,3 +258,28 @@ commands (the runbook and the vault carry the procedure); `fefo init` (it would 
 
 **Lesson:** read the generator's overwrite rules before deciding where knowledge lives; then prove the
 plan with a rehearsal instead of describing it.
+
+## 2026-11-12 — Final round on blt-project: review, fixes, consistency
+
+**Goal:** check the HackSoft styleguide use against the exercise, remove what a reviewer could knock
+down in ten seconds, and close in one round.
+
+**Tool and workflow:** OpenCode from the orchestrator; CodeGraph queried with the project path of
+`blt-project/api`; three `general` agents with disjoint file sets (backend, specs, docs), then
+`blt-domain` and `blt-genai` as read-only reviewers; my own run of the checks. The first backend
+agent refused to edit because of the freeze written in `AGENTS.local.md`; it could not see the
+user's grant, so it was relayed explicitly rather than weakening the rule.
+
+**Found:** docs claimed the styleguide groups endpoints in one class (it says one API per operation);
+`AGENTS.md` still said secrets live in `.env`; services imported DRF; a circular import was patched
+with a function-level import; specs had not been through the earlier refactor; test counts differed
+between documents.
+
+**Corrected after review:** the reviewers found a doc using the old exception name, a stale comment,
+a doc promising a link in the 409 message the code does not return, and an MCP claim that overstated
+"same services". Fixed by hand.
+
+**Discarded:** a `compose.test.yaml` and Factory Boy from FRETE-E (surface without a need here).
+
+**Lesson:** pinning the tracker URL in tests found a network call a mock had hidden; an agent's
+refusal on a freeze was correct behaviour, and the fix was to state the grant, not to bypass it.

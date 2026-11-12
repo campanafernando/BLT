@@ -29,9 +29,12 @@ A specialist advises; the layer agents edit. One owner per file set.
 
 ## Hard stops (in addition to the rules)
 
-- `blt-project/` is frozen until the selection-process submission is closed (Friday 2026-11-13
-  12:30, Brazil): no edit, format, commit or push there. `fefo index` may touch its git-ignored
-  `.codegraph/` only.
+- `blt-project/`: the user lifted the pre-submission freeze on 2026-11-12 for the final refactor
+  and authorized commits and pushes until that session ended. Outside such an explicit grant, edit
+  it only on request. After the submission is sent it is frozen until further notice (the e-mail
+  says so): no edit, format, commit or push; `fefo index` may touch its git-ignored `.codegraph/` only.
+- No FEFO files, manifest or agent definitions go inside `blt-project/`: run agents and CodeGraph
+  from this workspace and point them at it (`projectPath`).
 - Never read, print, copy or commit `.env` or anything under `secrets/` or `blt-project/secrets/`.
 - Never run `fefo init` or `fefo add blt-project` here: the manifest is hand-written (decision D9).
 - Commit or push only with the user's explicit authorization, each time.

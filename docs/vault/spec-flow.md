@@ -1,6 +1,6 @@
 # GenAI spec flow
 
-Verified 2026-11-12 against `blt-project@5222d7f`. Narrative: `blt-project/docs/ai/04-spec-feature.md`
+Verified 2026-11-12 against `blt-project@7956a12`. Narrative: `blt-project/docs/ai/04-spec-feature.md`
 and `blt-project/GENAI.md`. This note keeps the invariants an agent must not break.
 
 ## Flow
@@ -26,7 +26,7 @@ The same operations are MCP tools in `blt-project/mcp_server/server.py` (`blt-sp
 | S2 | The issue body is untrusted; it is cut at `SPEC_MAX_INPUT_CHARS` (12000) and the spec records `truncated`. | `generator._truncate` |
 | S3 | Model output is rendered as plain text in the Markdown. | `rendering.plain` |
 | S4 | Only repositories in `GITEA_ALLOWED_REPOS` (default `GITEA_REPO`) are read or written; if set it must include `GITEA_REPO`. | `gitea.repo_allowed` |
-| S5 | Publish is claimed first (`published_issue_url = "pending"`), so concurrent calls cannot create two issues; a failed call releases the claim; a second publish is 409. A process that dies after the claim needs a manual reset (accepted over a duplicate). | `services.publish_spec` |
+| S5 | Publish is claimed first (`published_issue_url = "pending"`), so concurrent calls cannot create two issues; a failed call releases the claim; a second publish is 409. A process that dies after the claim needs a manual reset (accepted over a duplicate). | `services.spec_publish` (`SpecAlreadyPublishedError` → 409 in `core/exceptions.py`) |
 | S6 | Pull requests are not issues: the URL is refused. | `gitea.fetch_issue` |
 | S7 | Failures have their own message: AI disabled 503, provider timeout / error / cut answer / empty answer / invalid JSON / outside the contract 502, tracker down 502, publish not configured 503. | `generator.py`, `gitea.py` |
 | S8 | Throttles: `spec` 10/h on `POST` only, `spec_publish` 30/h. Listing is not throttled. | `specs/views.py` |
