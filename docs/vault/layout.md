@@ -20,7 +20,7 @@ React client with separate indexes and separate agents. The manifest therefore l
 that share one Git root (`api` → `blt-project/api`, `web` → `blt-project/web`). Consequence:
 `fefo doctor` warns "not a Git repository" for both; the warning is expected (see `decisions.md`, D9).
 Never run `fefo add blt-project` or `fefo init`: both resolve to the Git root and guess the stack
-wrong (`compose.yaml` makes it `infra`).
+wrong (the Compose file makes it `infra`).
 
 ## Who owns what
 
@@ -31,7 +31,7 @@ wrong (`compose.yaml` makes it `infra`).
 | `api/hypermedia` (HTMX + Alpine, plain CSS) | `api` | `backend` + `design`; no business rule here |
 | `web/src` (React, Tailwind over `index.css` tokens) | `web` | `frontend` → `form`, `table`, `api-layer`, `design`, `i18n` |
 | `mcp_server/` | none (Python, imports `api/` services) | `integration`; follow `api` rules |
-| `compose.yaml`, `infra/`, `scripts/`, `api/Dockerfile`, `web/Dockerfile`, `web/nginx.conf` | none | `infra` |
+| `infra/` (`compose.yaml`, `gitea/`, `minio/`, `railway/`), `scripts/`, `api/Dockerfile`, `web/Dockerfile`, `web/nginx.conf.template` | none | `infra` |
 | `README.md`, `GENAI.md`, `AGENTS.md` (the loose `docs/` was folded into the first two on 2026-11-12) | none | docs agent; no password value anywhere |
 
 A task that crosses `api` and `web` goes to `cross-stack` first (contract first, see `contracts.md`).

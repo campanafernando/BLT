@@ -132,6 +132,16 @@ answers on its public URLs with the same data as local.
   hosted links and the credentials). The deadline is Friday 2026-11-13 12:30 (Brazil).
 - After the submission is sent, `blt-project/` is frozen until further notice.
 
+## Infrastructure in one folder (2026-11-12, late evening)
+
+`blt-project/infra/` now holds `compose.yaml`, `gitea/` (the image Compose and Railway both run, with an account
+bootstrap), `minio/` and `railway/` (a manifest, the variable files and `deploy.py`). The Compose init container, its token
+volume and the all-scope Gitea token are gone; the seed role of the API image waits for the last Gitea account. The
+`railway.toml` files were removed: Railway deprecated that format for new services and they had never been read.
+Tested from scratch in an isolated copy (own project, ports, volumes, secrets), including `make password`; the changed
+services were redeployed and `deploy.py --check` reports that Railway matches the folder. The hosted demo now holds
+test usage (a spec, an issue, a task, two e-mails): it is not the clean seed any more.
+
 ## Hosting on Railway (2026-11-12)
 
 The `blt` project is live on Railway (account "Fernando Campana's Projects", next to `ana`, which was not touched):
@@ -139,10 +149,10 @@ Postgres and Redis (templates), `gitea` (own image, volume), `mailpit` (behind a
 `seed`, `web` from `blt-project`. Public: `web` (React and `/app/`), `gitea`, `mailpit`; generic `*.up.railway.app`
 domains. Same users and password as local, same seeded data (19 tasks, 13 issues, compared item by item).
 
-- Built from the ANA base (its `railway.toml` pattern and the `railway` MCP wiring); the MCP is now in
+- Built from the ANA base (the `railway` MCP wiring; its `railway.toml` pattern turned out to be deprecated for new services); the MCP is now in
   `opencode.json`. Operations ran through the Railway CLI. Details: `blt-project/GENAI.md` 2.9 and the "Hosting on
   Railway" section of `blt-project/README.md`.
-- Recreate or update: `blt-project/deploy/railway.sh` (idempotent, `--dry-run`, secrets on stdin).
+- Recreate, check or update: `blt-project/infra/railway/deploy.py` (idempotent; `--dry-run`; `--check` compares the folder with what runs; secrets on stdin).
 - Verified: 26 public checks including the AI loop; the check's residue was removed afterwards.
 - Open: the Railway services were uploaded with `railway up` (not connected to GitHub), so a push does not redeploy;
   `railway ssh` is not set up (it registers an SSH key on the account); ANA shows two detached volumes with a
@@ -156,8 +166,8 @@ domains. Same users and password as local, same seeded data (19 tasks, 13 issues
   idempotent. Model output is rendered as plain text in the issue Markdown. `/auth/users/`
   returns only id and names; `/specs/config/` only `ai_enabled` and `publish_enabled`.
   `spec_publish` throttle (30/h) and the `spec` throttle only on `POST`. `NUM_PROXIES`, and
-  Nginx overwrites `X-Forwarded-For`. The Gitea bot is not an instance admin; its token has every scope on purpose (local test
-  stack), and `GITEA_ALLOWED_REPOS` limits what the app touches. Per-service env in Compose. The Postgres MCP role sees
+  Nginx overwrites `X-Forwarded-For`. The app talks to Gitea as the `blt` user (not an instance admin; no all-scope token since the
+  infrastructure consolidation), and `GITEA_ALLOWED_REPOS` limits what the app touches. Per-service env in Compose. The Postgres MCP role sees
   `tasks_task`, `specs_spec` and the `mcp_users` view; the MinIO MCP uses a read-only user with a bucket-scoped list/get policy (the built-in
   `readonly` policy cannot list);
   the `cli` MCP user is inactive with an unusable password. `make env` generates random
@@ -189,7 +199,7 @@ domains. Same users and password as local, same seeded data (19 tasks, 13 issues
   `make password`, so the value in the history no longer opens anything.
 - **Gitea access.** The local Gitea login is `blt@mail.com` plus the shared password (user `blt`), the same
   password as the BLT users; `ballast` and `lane` share it in Gitea too. Defaults live in
-  `.env.example` and `compose.yaml`.
+  `.env.example` and `infra/compose.yaml`.
 - **Task table.** One fixed grid in both clients (React and HTMX): columns measured identical
   across rows at 1440, 1100 and 1024 px, stacked cards below 1024 px, per-row differences shown
   as captions, avatars, tags and a row hover. A browser script with deliberately uneven rows

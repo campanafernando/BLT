@@ -355,3 +355,28 @@ carrying a local test issue to the hosted Gitea.
 **Lesson:** a tool that says "no changes" is not evidence; read the state back. And check a variable name against
 the tools that read the environment before using it.
 
+## 2026-11-12 (late evening) — The infrastructure in one folder
+
+**Goal:** put the Compose file, the Railway configuration and the infrastructure Dockerfiles under one `infra/`,
+remove the duplication, and make the repository match what runs on Railway.
+
+**Tool and workflow:** the agent inventoried the files, read Railway's documentation, rewrote the Compose file and
+the scripts, tested the new Compose from scratch in an isolated copy (own project name, ports, volumes and secrets)
+so the running local stack was not touched, then redeployed the changed services and compared the folder with
+Railway.
+
+**Found:** Railway has deprecated `railway.toml`; services created after that cannot use it, so the three files had
+never been read (which also explained the "no changes" from `environment edit` and the missing healthchecks).
+
+**Accepted:** one Gitea image for Compose and Railway (no init container, no token volume, no all-scope token);
+`infra/railway/deploy.py` with a manifest and `.env` files, and a `--check` proved with a negative test; a wait in
+the seed role so removing the init container does not create a race.
+
+**Corrected:** the first idea (keep the tomls together) would have moved a mistake; the isolated test needed the
+rotation script to accept an external `COMPOSE`, or it would have rotated the real stack.
+
+**Discarded:** Railway's own IaC file (a Node dependency for a repository about to be frozen).
+
+**Lesson:** a config file the platform ignores is worse than none; and "no changes" is not evidence, read the
+state back.
+

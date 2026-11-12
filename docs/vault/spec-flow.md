@@ -34,7 +34,7 @@ The same operations are MCP tools in `blt-project/mcp_server/server.py` (`blt-sp
 | S8 | Throttles: `spec` 10/h on `POST` only, `spec_publish` 30/h. Listing is not throttled. | `specs/views.py` |
 | S9 | The MCP tool `create_tasks_from_spec` writes nothing unless `confirm=true`; the draft is returned first. The `cli` user is inactive with an unusable password. | `mcp_server/server.py` |
 | S11 | A subject spec has `issue_url = ""`, `issue_number = null` (`Spec.source == "subject"`) and `repo = GITEA_REPO`; the allowlist is still enforced when it is published. | `services._subject_item`, `Spec.source` |
-| S10 | The Gitea bot is not an instance admin; its token has every scope on purpose (local stack). Tighten before any shared deployment. | `docs/mcp.md` |
+| S10 | The app talks to Gitea as the `blt` user (not an instance admin) with the shared password; there is no all-scope token. `GITEA_ALLOWED_REPOS` limits what it touches. | `docs/mcp.md` |
 
 ## Open
 

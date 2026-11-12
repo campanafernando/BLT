@@ -33,11 +33,11 @@ mkdir -m 700 secrets      # then one file per secret, see .env.example:
 # 1. Project database and MinIO
 cd blt-project
 make up                   # postgres, redis, mailpit, gitea, api, web
-docker compose --profile storage up -d minio minio-init
+make up-full              # the same plus MinIO and its bucket bootstrap (the storage profile)
 
 # 2. Read-only role (once)
 cd ..
-docker compose -f blt-project/compose.yaml exec -T db psql -U blt -d blt \
+docker compose -f blt-project/infra/compose.yaml exec -T db psql -U blt -d blt \
   -v mcp_password="$(cat secrets/blt_pg_password)" \
   -f - < mcp_servers/postgres-readonly.sql
 
@@ -77,16 +77,15 @@ internal implementations and the client talks to a single endpoint that resolves
   with a policy scoped to the project bucket (list and get, no put or delete). The built-in
   `readonly` policy is not used: it cannot list a bucket. It never uses the root keys.
 - `blt-specs` writes only issues, only in `GITEA_ALLOWED_REPOS`, and only with Gitea
-  credentials. The Gitea bot is not an instance admin, but its token has every scope: this is a
-  local test stack where the app should use the whole Gitea API. Tighten the scopes
-  (for example `write:issue`) before any shared deployment; `GITEA_ALLOWED_REPOS` already
-  limits which repositories the app touches.
+  credentials. The app talks to Gitea as the `blt` user (not an instance admin) with the shared
+  password: there is no all-scope token any more. `GITEA_ALLOWED_REPOS` limits which
+  repositories the app touches.
 - Compose services get an explicit `environment:` each, not the whole `.env`. The worker
   and beat see no AI, Gitea or storage secrets; only the API (and the one-shot
   `gitea-seed`) see Gitea.
 - The MCP `cli` user is inactive with an unusable password: it owns specs but cannot log in.
 - `railway` has no credential file: the CLI login is the credential, so it can do whatever the account can. Run it on
-  request and against `blt` only. The deployment script `blt-project/deploy/railway.sh` sends secrets on stdin; do the
+  request and against `blt` only. The deployment script `blt-project/infra/railway/deploy.py` sends secrets on stdin; do the
   same by hand. `railway variables` prints values: list names only.
 - Keys live in `.env` (gitignored). `.mcp.json` and `opencode.json` are versioned because
   they hold no secret.
@@ -100,7 +99,7 @@ file, then recreate whatever stored the old value.
    and MinIO keep the password they were created with, so either `docker compose down -v`
    (wipes local data) or change it in place (`ALTER USER`, `mc admin user`), then `make up`.
    The shared password has its own command: `make password` in `blt-project` (users, Gitea
-   accounts, a new Django key, and the old Gitea tokens are revoked).
+   accounts, which Gitea resets when it restarts, and a new Django key).
 2. `secrets/blt_pg_password` here: replace it and rerun the command in "Running it" so the role
    gets the new password. `secrets/minio_mcp_secret` must equal `blt-project/secrets/minio_ro_secret`.
 3. If the old `blt_mcp` password or any JWT was ever exposed to an MCP client, treat it as leaked:

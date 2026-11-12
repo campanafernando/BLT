@@ -1,7 +1,7 @@
 -- Run once (and again after schema changes) against the BLT database. Safe to re-run.
 -- The password comes from the file secrets/blt_pg_password. From the BLT root:
 --
--- docker compose -f blt-project/compose.yaml exec -T db psql -U blt -d blt \
+-- docker compose -f blt-project/infra/compose.yaml exec -T db psql -U blt -d blt \
 --   -v mcp_password="$(cat secrets/blt_pg_password)" \
 --   -f - < mcp_servers/postgres-readonly.sql
 --
