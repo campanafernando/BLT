@@ -95,7 +95,8 @@ file, then recreate whatever stored the old value.
 1. `blt-project/secrets/*`: replace the file (`openssl rand -hex 16 > secrets/<name>`). Postgres
    and MinIO keep the password they were created with, so either `docker compose down -v`
    (wipes local data) or change it in place (`ALTER USER`, `mc admin user`), then `make up`.
-   Rotating `blt_password` also needs the Gitea accounts to be recreated (`down -v`).
+   The shared password has its own command: `make password` in `blt-project` (users, Gitea
+   accounts, a new Django key, and the old Gitea tokens are revoked).
 2. `secrets/blt_pg_password` here: replace it and rerun the command in "Running it" so the role
    gets the new password. `secrets/minio_mcp_secret` must equal `blt-project/secrets/minio_ro_secret`.
 3. If the old `blt_mcp` password or any JWT was ever exposed to an MCP client, treat it as leaked:

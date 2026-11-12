@@ -197,3 +197,30 @@ history of both repositories on GitHub. Real secrets (database, Django key, MinI
 were. Cleaning the history means rewriting and force-pushing a public repository, which needs an
 explicit decision.
 
+## 2026-11-11 — Rotating the shared password
+
+**Goal:** the password that had been committed had to stop meaning anything, without rewriting the
+public history, and the new one had to apply to every login, Gitea included.
+
+**Approach:** make the rotation a command (`make password`) instead of a one-off: new password in
+`secrets/blt_password`, a new Django key so no earlier session or token survives, API recreated so
+the seed sets the new password, Gitea init re-run for the three accounts.
+
+**What the check found that my first check missed:**
+- `gitea admin user change-password` marks the account "must change password" unless told
+  otherwise, and Gitea then refuses its API until the web flow is done. My first login check
+  counted any page other than the login form as success, which included the forced-change page, so
+  it passed while the bot was blocked. The API call that failed and a 403 on the token list exposed
+  it. The init now passes `--must-change-password=false`, and the check classifies the landing page.
+- `ballast` and `lane` were only created, never updated, so a rotation would have left them on the
+  old password.
+- Gitea keeps old API tokens alive after a password change. The init now revokes every token of
+  the bot except the new one (one token remains, and the API reads the issue with it).
+
+**Verified:** all three BLT users and all four Gitea logins accept the new password on the web and
+the API and refuse the old one; a token and a refresh token issued before the rotation get 401; no
+container's `docker inspect`, no tracked file and no commit contains the new value.
+
+**Left on purpose:** the old password stays in the git history (now useless), and backups from
+before the rotation sit outside the repositories until they are deleted.
+

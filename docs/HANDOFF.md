@@ -70,7 +70,8 @@ console errors, warnings or failed requests. It is a manual script, not part of 
   launchers), mounted by Compose as `/run/secrets/*` only into the services that need them;
   `make env` creates them and migrates any value still in an older `.env`. Verified: a scan of
   `docker inspect` of every container finds none of the secret values. Real secrets never reached
-  the git history; the shared password did, before this change, and is still there.
+  the git history. The shared password did, before this change; it was then rotated with
+  `make password`, so the value in the history no longer opens anything.
 - **Gitea access.** The local Gitea login is `blt@mail.com` plus the shared password (user `blt`), the same
   password as the BLT users; `ballast` and `lane` share it in Gitea too. Defaults live in
   `.env.example` and `compose.yaml`.
@@ -91,8 +92,10 @@ Reasons: [`architecture.md`](architecture.md).
 - `unblock_account()` in `specs/gitea.py` is probably redundant; validate on a fresh Gitea
   volume.
 - `Spec` does not use `BaseModel`.
-- The shared password is in the git history of both repositories (it was committed before the
-  secrets change). Removing it needs a history rewrite and a force push, or a new password.
+- The old shared password is still in the git history, but it was rotated and is refused by the
+  API and by Gitea; `make password` repeats the rotation.
+- Old copies of `.env` and database/Gitea dumps from before the rotation may exist outside the
+  repositories (`~/blt-backup-*`); they hold retired and still-live secrets and should be deleted.
 - The Gitea token file lives in a named volume readable by the API and the seed containers.
 - Fonts still load from Google Fonts. No dark theme (the Ballast Lane site has one).
 - React filters are not in the URL.
