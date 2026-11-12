@@ -42,6 +42,9 @@ server-rendered client with HTMX + Alpine.js.
 - `postgres-blt` and `minio-blt` are read-only by construction. Do not add a write tool
   without reviewing the contract and the database role.
 - `blt-specs` writes only issues (with Gitea credentials configured) and, with `confirm=true`, tasks.
+- `railway` is the only connection that can change infrastructure (it uses the Railway CLI login). Use it
+  only on request, against the `blt` project, never against `ana`. Secrets go to Railway on stdin, never as
+  arguments, and variable values are not printed (list names only).
 - The scaling pattern is the FRETE-E gateway; here the launchers play the routing role.
 
 ## Forbidden

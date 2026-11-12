@@ -331,3 +331,27 @@ making `overdue` strict (django-filter treats an unknown boolean as empty).
 **Lesson:** a screenshot found two defects that every assertion passed (a clipped letter, a cut date);
 and an assertion that passes because the page had nothing to check (no unassigned row) proves nothing,
 so look at the evidence.
+
+## 2026-11-12 (night) — Hosting on Railway, from the ANA base
+
+**Goal:** publish the whole stack with the seeded data, reusing what ANA already has on Railway.
+
+**Tool and workflow:** the agent read ANA (repository and, read-only, its published Railway project), replicated
+the `railway` MCP wiring, and built the `blt` project with the Railway CLI (the MCP showed up in its tool list only
+after the work started). Secrets went on stdin; the provider key came from ANA's `.env`, the password from the
+local secrets file. Tested piece by piece locally before touching Railway, then 26 checks on the public URLs.
+
+**Accepted:** one image with the process chosen by `SERVICE_ROLE`; no dump (the seed commands reproduce the
+data, checked item by item); only `web`, `gitea` and `mailpit` public; Gitea creates its own accounts in a wrapper
+because a volume cannot be shared between Railway services.
+
+**Corrected:** a flag named `HTTPS_PROXY` broke the image build (pip reads it as a proxy); the web service started
+before the API existed and kept an empty upstream; `railway environment edit` reported "no changes" and applied
+none; the verification script's cleanup crashed on an empty 204 and left test data, which was then removed.
+
+**Discarded:** Terraform (a mention only, by decision), registering an SSH key on the account to get a shell, and
+carrying a local test issue to the hosted Gitea.
+
+**Lesson:** a tool that says "no changes" is not evidence; read the state back. And check a variable name against
+the tools that read the environment before using it.
+

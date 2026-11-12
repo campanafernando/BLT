@@ -120,6 +120,23 @@ product; Part 2: the tooling and how the code was produced, including this orche
 last, the over-review with AI and the Chromium round). `docs/`, `docs/ai/` and `mcp_server/README.md`
 were folded into them and removed; git history keeps the old files.
 
+## Hosting on Railway (2026-11-12)
+
+The `blt` project is live on Railway (account "Fernando Campana's Projects", next to `ana`, which was not touched):
+Postgres and Redis (templates), `gitea` (own image, volume), `mailpit` (behind a login), and `api`, `worker`, `beat`,
+`seed`, `web` from `blt-project`. Public: `web` (React and `/app/`), `gitea`, `mailpit`; generic `*.up.railway.app`
+domains. Same users and password as local, same seeded data (19 tasks, 13 issues, compared item by item).
+
+- Built from the ANA base (its `railway.toml` pattern and the `railway` MCP wiring); the MCP is now in
+  `opencode.json`. Operations ran through the Railway CLI. Details: `blt-project/GENAI.md` 2.9 and the "Hosting on
+  Railway" section of `blt-project/README.md`.
+- Recreate or update: `blt-project/deploy/railway.sh` (idempotent, `--dry-run`, secrets on stdin).
+- Verified: 26 public checks including the AI loop; the check's residue was removed afterwards.
+- Open: the Railway services were uploaded with `railway up` (not connected to GitHub), so a push does not redeploy;
+  `railway ssh` is not set up (it registers an SSH key on the account); ANA shows two detached volumes with a
+  scheduled deletion on 2026-11-13 (`woodpecker-server-volume` and a `woodpecker-db-volume`): worth a look, not
+  touched. The Gitea issue #21 in the local Gitea is a local test, not seed data, and is not on Railway.
+
 ## What changed
 
 - **Security.** Gitea repository allowlist (`GITEA_ALLOWED_REPOS`, default `GITEA_REPO`; if

@@ -28,6 +28,10 @@
       "blt-specs": {
         "type": "local",
         "command": ["bash", "blt-project/mcp_server/run.sh"]
+      },
+      "railway": {
+        "type": "local",
+        "command": ["railway", "mcp"]
       }
     }
   }

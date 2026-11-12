@@ -57,7 +57,7 @@ Product documentation (run, endpoints, code layout, GenAI flow, demo script) liv
 
 ## MCP (bonus)
 
-This workspace exposes five MCP connections, each with its own credential:
+This workspace exposes six MCP connections, each with its own credential (the last one, the login of the Railway CLI):
 
 | Server | Source | Mode |
 |---|---|---|
@@ -65,6 +65,7 @@ This workspace exposes five MCP connections, each with its own credential:
 | `postgres-blt` | Compose Postgres | read-only (`blt_mcp`: `tasks_task`, `specs_spec`, view `mcp_users`) |
 | `minio-blt` | Compose MinIO | read-only user, no `put`/`delete` tool |
 | `blt-specs` | `blt-project` spec flow | read; writes only an issue (publish) or tasks (`create_tasks_from_spec`, `confirm=true`) |
+| `railway` | Railway account (`railway mcp`), the same wiring as ANA | read and write; on request, `blt` project only |
 
 Agent rules in [`AGENTS.md`](AGENTS.md) and [`AGENTS.local.md`](AGENTS.local.md) (BLT specialists, hard stops).
 Configuration in [`opencode.json`](opencode.json) and [`.mcp.json`](.mcp.json); launchers

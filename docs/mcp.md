@@ -1,8 +1,8 @@
 # BLT MCP servers
 
-The orchestrator exposes five MCP connections. Four are read-only views over the
+The orchestrator exposes six MCP connections. Four are read-only views over the
 infrastructure; one is the product tool (specs), which also writes — but only issues, and
-only when explicitly asked.
+only when explicitly asked; the last one, `railway`, manages the hosting and can change it.
 
 | Server | Source | Mode | Tools |
 |---|---|---|---|
@@ -11,6 +11,7 @@ only when explicitly asked.
 | `postgres-blt` | Compose Postgres | **read-only** | schemas, tables, details, restricted SQL |
 | `minio-blt` | Compose MinIO | **read-only** | buckets, objects, metadata, presigned URL |
 | `blt-specs` | `blt-project/mcp_server` (same services as the API) | read + issue write | list issues, generate spec, list specs, publish, create tasks from a spec (needs `confirm=true`) |
+| `railway` | the Railway account, through the CLI's own login (`railway mcp`), wired as in ANA | **read + write** | projects, services, variables, domains, logs, metrics, deployments, docs |
 
 ## Why one server per source
 
@@ -84,6 +85,9 @@ internal implementations and the client talks to a single endpoint that resolves
   and beat see no AI, Gitea or storage secrets; only the API (and the one-shot
   `gitea-seed`) see Gitea.
 - The MCP `cli` user is inactive with an unusable password: it owns specs but cannot log in.
+- `railway` has no credential file: the CLI login is the credential, so it can do whatever the account can. Run it on
+  request and against `blt` only. The deployment script `blt-project/deploy/railway.sh` sends secrets on stdin; do the
+  same by hand. `railway variables` prints values: list names only.
 - Keys live in `.env` (gitignored). `.mcp.json` and `opencode.json` are versioned because
   they hold no secret.
 
