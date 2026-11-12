@@ -41,7 +41,7 @@ the repository presented for the selection process, `BLT` keeps the AI orchestra
 
 | Check | Result |
 |---|---|
-| pytest | 191 passed, 95.62% coverage (80% floor), run 2026-11-12 after the lint round |
+| pytest | 231 passed, 95.75% coverage (80% floor), run 2026-11-12 after the end-to-end round |
 | ruff check + format | clean |
 | `manage.py check`, `makemigrations --check` | clean |
 | drf-spectacular `--validate --fail-on-warn` | `schema.yaml` regenerated, no warnings |
@@ -92,6 +92,25 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
   (88 columns) on `mcp_server/` and undid the project format. `make lint` covers `mcp_server/`.
 - Not done: no browser run of the new React form; the Docker stack was not rebuilt (the running
   containers still hold the previous image).
+
+## Third round (2026-11-12): `make up`, end-to-end in Chromium, `pyproject.toml`
+
+- **Dependencies** are declared in `blt-project/api/pyproject.toml` (`[project]`, `[dependency-groups]`)
+  and locked in `api/uv.lock`; `requirements*.txt/.in` are gone. The Dockerfile installs from the lock;
+  `make install` is `uv sync`; `make lock` / `lock-check` (run by `make check`). Only boto3, botocore,
+  coverage and psycopg moved version (minor or patch) against the old pins.
+- **`make up` on the existing stack** rebuilt the images (first build of the uv Dockerfile) and ran
+  migration `0002`. The seeded data and secrets were untouched.
+- **End-to-end round**: API, React and HTMX in Chromium at 1440 and 390 px, live model and Gitea, with
+  throwaway `e2e_*` users and a cleanup checked against the baseline. Final pass: API 29, React 52,
+  HTMX 36, throttle 2, cleanup 3. Plan, results and defects: `blt-project/docs/e2e-round.md`. The
+  script is outside the repository.
+- **Defects found and fixed**: invalid filter values were silently ignored (now 400); "Unassigned"
+  clipped in both clients; HTMX date filter cut on a phone; React summary lacked "Done"; row buttons
+  lacked the task name. Observed and left: `overdue=maybe`, a 16 px checkbox on a phone, a toast over
+  the nav, and a Chromium quirk that reports a 204 `DELETE` as `ERR_ABORTED` (reproduced with a bare
+  `fetch`).
+- **Pre-commit**: ruff hooks scoped to `api/`; verified with `uvx pre-commit run --all-files`.
 
 ## What changed
 

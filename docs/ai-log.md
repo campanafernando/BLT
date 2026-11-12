@@ -306,3 +306,28 @@ Architecture note says so.
 
 **Lesson:** a live run against the real model and tracker is the only check of this feature that
 the mocked tests cannot give; it took one script and left the Gitea seed as it was.
+
+
+## 2026-11-12 (evening) — pyproject, `make up`, a browser round
+
+**Goal:** meet the exercise's `pyproject.toml` requirement, run the real stack, and test both clients
+and the API in Chromium without leaving data behind.
+
+**Tool and workflow:** one `general` agent for the dependency migration (owned files, no Docker);
+I ran `make up`, wrote the round as a Node script outside the repository (`playwright-core` with the
+Chromium already cached), read the failures and the screenshots myself. The model calls were real.
+
+**Accepted:** uv with a lock file and `package = false`; a round that creates its own users so no
+seeded secret is read; cleanup verified against counts taken first.
+
+**Corrected:** most first failures were my assumptions, not the product: a substring selector that
+also matched a history button, a Delete button that is hidden (correctly) for a non-creator, a user
+whose task count changed between phases, and a Chromium `ERR_ABORTED` for a 204 `DELETE` that a bare
+`fetch` reproduced. Four were real and were fixed (see HANDOFF).
+
+**Discarded:** committing the browser script (a new dependency and a harness that drives Docker);
+making `overdue` strict (django-filter treats an unknown boolean as empty).
+
+**Lesson:** a screenshot found two defects that every assertion passed (a clipped letter, a cut date);
+and an assertion that passes because the page had nothing to check (no unassigned row) proves nothing,
+so look at the evidence.
