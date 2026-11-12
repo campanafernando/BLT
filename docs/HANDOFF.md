@@ -2,6 +2,13 @@
 
 Updated: 2026-11-11
 
+## Delivery (from the company's e-mail)
+
+One public repository only, `blt-project`, with the code, `GENAI.md` at the root and a
+presentation (`PRESENTATION.md`); no symlinks; deadline Friday 13 Nov, 12:30 (Brazil). After the
+submission the work is frozen until further notice. This repository is the optional companion
+described in `GENAI.md` and is not what gets sent.
+
 ## State
 
 The audit and refactor of 2026-11-10/11 is committed in both repositories; `blt-project` is
