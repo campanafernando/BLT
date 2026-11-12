@@ -86,7 +86,7 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
   `generate_spec(issue_url, subject)`. Verified live (real model, local Gitea, in-memory DB):
   subject → spec → issue → spec, second publish refused, issue deleted, Gitea back to 13 issues.
 - `GENAI.md`: directives and audit paragraph (section 2), prompt framed as the one I would use,
-  both directions, real run. `design-decisions.md`: Clean Architecture and TDD stated plainly,
+  both directions, real run. `blt-project/README.md` (Design decisions): Clean Architecture and TDD stated plainly,
   including that the `specs` adapters raise DRF exceptions.
 - `.pre-commit-config.yaml` ruff hooks scoped to `api/`: from the repo root they used ruff defaults
   (88 columns) on `mcp_server/` and undid the project format. `make lint` covers `mcp_server/`.
@@ -103,14 +103,22 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
   migration `0002`. The seeded data and secrets were untouched.
 - **End-to-end round**: API, React and HTMX in Chromium at 1440 and 390 px, live model and Gitea, with
   throwaway `e2e_*` users and a cleanup checked against the baseline. Final pass: API 29, React 52,
-  HTMX 36, throttle 2, cleanup 3. Plan, results and defects: `blt-project/docs/e2e-round.md`. The
-  script is outside the repository.
+  HTMX 36, throttle 2, cleanup 3. Plan, results and defects: `blt-project/GENAI.md` (Over-review with AI) and the
+  summary in `blt-project/README.md` (Tests and quality). The script is outside the repository.
 - **Defects found and fixed**: invalid filter values were silently ignored (now 400); "Unassigned"
   clipped in both clients; HTMX date filter cut on a phone; React summary lacked "Done"; row buttons
   lacked the task name. Observed and left: `overdue=maybe`, a 16 px checkbox on a phone, a toast over
   the nav, and a Chromium quirk that reports a 204 `DELETE` as `ERR_ABORTED` (reproduced with a bare
   `fetch`).
 - **Pre-commit**: ruff hooks scoped to `api/`; verified with `uvx pre-commit run --all-files`.
+
+## Documentation reorganised (2026-11-12)
+
+`blt-project/` now has two documents besides `AGENTS.md`: `README.md` (overview, setup and scripts,
+architecture, design decisions, tests, UI, demo script) and `GENAI.md` (Part 1: the applied AI in the
+product; Part 2: the tooling and how the code was produced, including this orchestration repository;
+last, the over-review with AI and the Chromium round). `docs/`, `docs/ai/` and `mcp_server/README.md`
+were folded into them and removed; git history keeps the old files.
 
 ## What changed
 
@@ -162,7 +170,7 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
 - **New feature: spec → tasks.** `POST /api/v1/specs/{id}/tasks/`, a React dialog, and the MCP
   tool `create_tasks_from_spec` (draft unless `confirm=true`). No new model call.
 
-Layout and names: [`blt-project/docs/architecture.md`](../blt-project/docs/architecture.md).
+Layout and names: [`blt-project/README.md`](../blt-project/README.md) (Architecture).
 Reasons: [`architecture.md`](architecture.md).
 
 ## Open items
@@ -187,8 +195,7 @@ Reasons: [`architecture.md`](architecture.md).
 
 ## Next steps
 
-1. Record a five-minute backup of
-   `blt-project/docs/demo.md`.
+1. Record a five-minute backup of the Demo script in `blt-project/README.md`.
 2. Publish a deployment (Railway or a VPS) with seed data and the sample issues; run
    `manage.py check --deploy` first.
 3. Pick items from the GenAI backlog.

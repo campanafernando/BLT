@@ -1,7 +1,7 @@
 # GenAI spec flow
 
-Verified 2026-11-12 against `blt-project` with the subject input (uncommitted at the time of writing; see HANDOFF for the revision). Narrative: `blt-project/docs/ai/04-spec-feature.md`
-and `blt-project/GENAI.md`. This note keeps the invariants an agent must not break.
+Verified 2026-11-12 against `blt-project` with the subject input (uncommitted at the time of writing; see HANDOFF for the revision). Narrative: `blt-project/GENAI.md`
+(Part 1). This note keeps the invariants an agent must not break.
 
 ## Flow
 

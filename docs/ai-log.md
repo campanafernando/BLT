@@ -15,7 +15,7 @@ Each entry has: goal, tool, prompt, what was accepted, what was corrected and wh
 
 **Tool:** OpenCode (`deepseek-v4.1-flash`), with the ANA/LOGUS workspace as context.
 
-**Prompt:** see `blt-project/docs/ai/01-scaffold-prompt.md`.
+**Prompt:** see `blt-project/GENAI.md` (2.5 and 2.6).
 
 **Accepted without changes:**
 - Settings structure driven by environment variables.
@@ -323,7 +323,7 @@ seeded secret is read; cleanup verified against counts taken first.
 **Corrected:** most first failures were my assumptions, not the product: a substring selector that
 also matched a history button, a Delete button that is hidden (correctly) for a non-creator, a user
 whose task count changed between phases, and a Chromium `ERR_ABORTED` for a 204 `DELETE` that a bare
-`fetch` reproduced. Four were real and were fixed (see HANDOFF).
+`fetch` reproduced. Five were real and were fixed (see HANDOFF).
 
 **Discarded:** committing the browser script (a new dependency and a harness that drives Docker);
 making `overdue` strict (django-filter treats an unknown boolean as empty).

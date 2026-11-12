@@ -2,7 +2,7 @@
 
 Why the project is built this way. For how the code is laid out today (layers, service and
 selector names, endpoints, GenAI flow) read
-[`blt-project/docs/architecture.md`](../blt-project/docs/architecture.md). The MCP topology
+[`blt-project/README.md`](../blt-project/README.md) (Architecture). The MCP topology
 and the security model are in [`mcp.md`](mcp.md).
 
 ## Why two clients
@@ -54,7 +54,7 @@ returns 201 before the e-mail leaves; a slow or dead broker does not block the r
 React uses JWT (access 30 min, refresh 7 days, rotation and blacklist); HTMX uses the Django
 session with CSRF. Both coexist. The refresh token in `localStorage` is a documented
 trade-off: production should use an `HttpOnly` cookie with `SameSite` and CSRF, or a
-backend-for-frontend. See `blt-project/docs/ai/03-decisions.md`.
+backend-for-frontend. See `blt-project/README.md` (Design decisions).
 
 ## Why SQLite by default
 

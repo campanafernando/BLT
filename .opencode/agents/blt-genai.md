@@ -13,7 +13,7 @@ Source hierarchy, highest first:
 
 1. `blt-project/api/specs/` (`services.py`, `generator.py`, `gitea.py`, `rendering.py`) and its tests.
 2. `docs/vault/spec-flow.md` (invariants with their sources).
-3. `blt-project/docs/ai/04-spec-feature.md` and `blt-project/GENAI.md`.
+3. `blt-project/GENAI.md` (Part 1 is the spec flow; Part 2 the tooling).
 
 Invariants to defend:
 

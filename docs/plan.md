@@ -43,6 +43,6 @@ Target date: Friday, 2026-11-13. Updated: Wednesday, 2026-11-11.
 | High coverage without useful asserts | Tests cover edges: idempotency, 404, inactive user, past date |
 | Demo breaks on a clean clone | Clone into `/tmp` checklist before delivery |
 | Over-abstraction | No repository, use case or DTO; layers only where there is a rule |
-| `localStorage` in React | Trade-off documented in `docs/ai/03-decisions.md` |
+| `localStorage` in React | Trade-off documented in `blt-project/README.md` (Design decisions) |
 | GenAI provider unavailable | Seeded spec and a clear 503 path |
 | GitHub Actions disabled | Delivery checks run locally; no hosted workflow |

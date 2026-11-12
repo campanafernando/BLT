@@ -52,7 +52,8 @@ make up                       # Gitea at http://localhost:3000
 | [`docs/fefo/ADOPTION.md`](docs/fefo/ADOPTION.md) | Runbook to turn BLT into a FEFO workspace (prepared, not yet executed) |
 
 Product documentation (run, endpoints, code layout, GenAI flow, demo script) lives in
-[`blt-project/README.md`](blt-project/README.md) and `blt-project/docs/`.
+[`blt-project/README.md`](blt-project/README.md) (setup, architecture, decisions, demo) and
+[`blt-project/GENAI.md`](blt-project/GENAI.md) (applied AI, and the tooling behind the code).
 
 ## MCP (bonus)
 

@@ -2,7 +2,7 @@
 
 Durable decisions: date, context, decision, consequence. Not a task tracker. The long reasoning
 for D1–D8 is in [`../architecture.md`](../architecture.md) and
-`blt-project/docs/design-decisions.md`; the entries here are the short form an agent can rely on. D1–D8 were made during the build
+`blt-project/README.md` (Design decisions); the entries here are the short form an agent can rely on. D1–D8 were made during the build
 (2026-11-10/11) and distilled here on 2026-11-12; D9 onwards were made on 2026-11-12.
 
 ## D1 — Two clients over one service layer

@@ -32,7 +32,7 @@ wrong (`compose.yaml` makes it `infra`).
 | `web/src` (React, Tailwind over `index.css` tokens) | `web` | `frontend` → `form`, `table`, `api-layer`, `design`, `i18n` |
 | `mcp_server/` | none (Python, imports `api/` services) | `integration`; follow `api` rules |
 | `compose.yaml`, `infra/`, `scripts/`, `api/Dockerfile`, `web/Dockerfile`, `web/nginx.conf` | none | `infra` |
-| `docs/`, `GENAI.md`, `README.md`, `AGENTS.md` | none | docs agent; no password value anywhere |
+| `README.md`, `GENAI.md`, `AGENTS.md` (the loose `docs/` was folded into the first two on 2026-11-12) | none | docs agent; no password value anywhere |
 
 A task that crosses `api` and `web` goes to `cross-stack` first (contract first, see `contracts.md`).
 
