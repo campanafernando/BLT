@@ -120,6 +120,18 @@ product; Part 2: the tooling and how the code was produced, including this orche
 last, the over-review with AI and the Chromium round). `docs/`, `docs/ai/` and `mcp_server/README.md`
 were folded into them and removed; git history keeps the old files.
 
+## Final state before the submission (2026-11-12, Thursday evening)
+
+`blt-project@229d5af` is pushed and verified on a clean clone (231 tests, 95.75%, lint, compose config, no symlinks,
+no secret tracked). It now has `PRESENTATION.md` (a draft to refine by hand before sending), a `README.md` and a
+`GENAI.md` that describe the method without stating who typed what, and the Railway deployment. The hosted demo
+answers on its public URLs with the same data as local.
+
+- To do by hand: refine `PRESENTATION.md`; decide whether to replace the shared demo password on Railway before
+  sending (it also protects Gitea and Mailpit there); send the e-mail (one GitHub link, the presentation, the
+  hosted links and the credentials). The deadline is Friday 2026-11-13 12:30 (Brazil).
+- After the submission is sent, `blt-project/` is frozen until further notice.
+
 ## Hosting on Railway (2026-11-12)
 
 The `blt` project is live on Railway (account "Fernando Campana's Projects", next to `ana`, which was not touched):
