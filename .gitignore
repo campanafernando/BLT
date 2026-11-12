@@ -5,6 +5,7 @@ blt-project/
 .env
 .env.*
 !.env.example
+secrets/
 
 # CodeGraph
 codegraph/**/*.db

@@ -16,12 +16,12 @@ user created by `minio-init` (`MINIO_RO_ACCESS_KEY`), never the root keys.
 
 ## Variables
 
-In the BLT `.env` (documented in `.env.example`):
+In the BLT `.env` (documented in `.env.example`) the endpoint, access key and bucket; the secret
+itself is the file `secrets/minio_mcp_secret`, never an `.env` entry:
 
 ```
 MINIO_ENDPOINT=http://127.0.0.1:9200
 MINIO_ACCESS_KEY=...
-MINIO_SECRET_KEY=...
 MINIO_BUCKET=blt-media
 ```
 

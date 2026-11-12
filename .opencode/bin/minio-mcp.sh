@@ -9,7 +9,7 @@ source "${DIR}/mcp-common.sh"
 
 export MINIO_ENDPOINT="$(env_get MINIO_ENDPOINT)"
 export MINIO_ACCESS_KEY="$(env_get MINIO_ACCESS_KEY)"
-export MINIO_SECRET_KEY="$(env_get MINIO_SECRET_KEY)"
+export MINIO_SECRET_KEY="$(secret_get minio_mcp_secret)"
 export MINIO_BUCKET="$(env_get MINIO_BUCKET)"
 
 exec uv run --quiet --python 3.12 \

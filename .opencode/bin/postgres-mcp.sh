@@ -10,11 +10,11 @@ host="$(env_get BLT_PG_HOST)"
 port="$(env_get BLT_PG_PORT)"
 name="$(env_get BLT_PG_NAME)"
 user="$(env_get BLT_PG_USER)"
-password="$(env_get BLT_PG_PASSWORD)"
+password="$(secret_get blt_pg_password)"
 mode="${POSTGRES_MCP_ACCESS_MODE:-restricted}"
 
 if [[ -z "${host}" || -z "${name}" || -z "${user}" || -z "${password}" ]]; then
-    echo "Set BLT_PG_HOST, BLT_PG_PORT, BLT_PG_NAME, BLT_PG_USER and BLT_PG_PASSWORD in .env." >&2
+    echo "Set BLT_PG_HOST, BLT_PG_PORT, BLT_PG_NAME and BLT_PG_USER in .env." >&2
     exit 1
 fi
 

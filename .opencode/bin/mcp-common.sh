@@ -23,6 +23,16 @@ for line in Path(sys.argv[1]).read_text().splitlines():
 PY
 }
 
+# Passwords are files in secrets/ (git-ignored), never entries of .env.
+secret_get() {
+    local file="${ROOT}/secrets/$1"
+    if [[ ! -s "${file}" ]]; then
+        echo "Missing secret ${file}. See .env.example for the files this repository expects." >&2
+        exit 1
+    fi
+    tr -d '\n' < "${file}"
+}
+
 urlencode() {
     python3 -c 'import sys, urllib.parse; print(urllib.parse.quote(sys.argv[1], safe=""))' "$1"
 }
