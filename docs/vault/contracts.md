@@ -20,7 +20,7 @@ There is no code generator for the client. A contract change updates **both** th
 |---|---|
 | Auth | `auth/token/`, `auth/refresh/`, `auth/me/`, `auth/users/` (id and names only) |
 | Tasks | `tasks/`, `tasks/summary/`, `tasks/<id>/`, `tasks/<id>/complete/`, `…/reopen/`, `…/assign/` |
-| Specs | `specs/`, `specs/config/` (only `ai_enabled`, `publish_enabled`), `specs/<id>/`, `…/publish/`, `…/tasks/` |
+| Specs | `specs/` (body: `issue_url` xor `subject`; `Spec.source` is `issue` or `subject`), `specs/config/` (only `ai_enabled`, `publish_enabled`), `specs/<id>/`, `…/publish/`, `…/tasks/` |
 | Docs | `api/schema/`, `api/docs/` |
 | HTMX client | `app/`, `app/rows/`, `app/tasks/`, `app/tasks/<id>/complete|reopen|delete/` (HTML, not part of the JSON contract) |
 

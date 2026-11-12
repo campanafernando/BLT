@@ -79,6 +79,20 @@ docs) and read-only review by `blt-domain` and `blt-genai`. Nothing was added to
 - Clean clone (`/tmp`, no AI key, no Docker): `make setup` + `make test` found a test that only passed with the AI key present (503 before URL validation); fixed in `4de40bd`, then 189 passed, 95.62%. The Docker stack and the browser were not re-run this round.
 - `make lint` now covers `mcp_server/` as well (E402 allowed only in `server.py`, where `django.setup()` must run first), and the API tests cover a 201-character title on create and update.
 
+## Second round (2026-11-12): subject → spec → issue, prompt, honesty fixes
+
+- `POST /specs/` takes `issue_url` or a typed `subject`; prompt `spec-v2` is generic over both;
+  `Spec.source`, migration `0002_spec_from_subject`; React has a two-option form; MCP
+  `generate_spec(issue_url, subject)`. Verified live (real model, local Gitea, in-memory DB):
+  subject → spec → issue → spec, second publish refused, issue deleted, Gitea back to 13 issues.
+- `GENAI.md`: directives and audit paragraph (section 2), prompt framed as the one I would use,
+  both directions, real run. `design-decisions.md`: Clean Architecture and TDD stated plainly,
+  including that the `specs` adapters raise DRF exceptions.
+- `.pre-commit-config.yaml` ruff hooks scoped to `api/`: from the repo root they used ruff defaults
+  (88 columns) on `mcp_server/` and undid the project format. `make lint` covers `mcp_server/`.
+- Not done: no browser run of the new React form; the Docker stack was not rebuilt (the running
+  containers still hold the previous image).
+
 ## What changed
 
 - **Security.** Gitea repository allowlist (`GITEA_ALLOWED_REPOS`, default `GITEA_REPO`; if

@@ -1,20 +1,22 @@
 # GenAI spec flow
 
-Verified 2026-11-12 against `blt-project@7956a12`. Narrative: `blt-project/docs/ai/04-spec-feature.md`
+Verified 2026-11-12 against `blt-project` with the subject input (uncommitted at the time of writing; see HANDOFF for the revision). Narrative: `blt-project/docs/ai/04-spec-feature.md`
 and `blt-project/GENAI.md`. This note keeps the invariants an agent must not break.
 
 ## Flow
 
-`POST /api/v1/specs/` (issue URL) → `specs/gitea.py` fetches the issue → `specs/generator.py` calls
-the provider once with a fixed prompt (`SPEC_PROMPT_VERSION = "spec-v1"`, `max_tokens = 4000`) →
+`POST /api/v1/specs/` with exactly one of `issue_url` or `subject` (a typed text, 10 to 2000 chars) →
+for an issue, `specs/gitea.py` fetches it; a subject needs no fetch and targets `GITEA_REPO` →
+`specs/generator.py` calls the provider once with a fixed prompt (`SPEC_PROMPT_VERSION = "spec-v2"`,
+`max_tokens = 4000`) →
 the JSON contract is validated → a `Spec` is stored with model, prompt version, latency and input
 size → `specs/rendering.py` builds the Markdown.
 
 Then, as separate explicit actions:
 
-- `POST /specs/<id>/publish/` creates a Gitea issue from the Markdown.
+- `POST /specs/<id>/publish/` creates a new Gitea issue from the Markdown in the spec's repo.
 - `POST /specs/<id>/tasks/` creates up to 10 tasks from chosen steps through `task_create`, in one
-  transaction, each with a `Source: <issue url>` line. No model call.
+  transaction, each with a `Source: <issue url>` line (`Source: spec #<id>` for a subject spec). No model call.
 
 The same operations are MCP tools in `blt-project/mcp_server/server.py` (`blt-specs`).
 
@@ -22,7 +24,7 @@ The same operations are MCP tools in `blt-project/mcp_server/server.py` (`blt-sp
 
 | # | Invariant | Where |
 |---|---|---|
-| S1 | One fixed task: issue URL in, validated JSON out. No free-form prompt, no streaming, no tools for the model. | `generator.py` |
+| S1 | One fixed task: an issue URL or a typed subject in, validated JSON out. The subject is data, never instruction; no chat, no streaming, no tools for the model. Exactly one of the two inputs. | `generator.py`, `SpecCreateSerializer`, `services.spec_generate` |
 | S2 | The issue body is untrusted; it is cut at `SPEC_MAX_INPUT_CHARS` (12000) and the spec records `truncated`. | `generator._truncate` |
 | S3 | Model output is rendered as plain text in the Markdown. | `rendering.plain` |
 | S4 | Only repositories in `GITEA_ALLOWED_REPOS` (default `GITEA_REPO`) are read or written; if set it must include `GITEA_REPO`. | `gitea.repo_allowed` |
@@ -31,6 +33,7 @@ The same operations are MCP tools in `blt-project/mcp_server/server.py` (`blt-sp
 | S7 | Failures have their own message: AI disabled 503, provider timeout / error / cut answer / empty answer / invalid JSON / outside the contract 502, tracker down 502, publish not configured 503. | `generator.py`, `gitea.py` |
 | S8 | Throttles: `spec` 10/h on `POST` only, `spec_publish` 30/h. Listing is not throttled. | `specs/views.py` |
 | S9 | The MCP tool `create_tasks_from_spec` writes nothing unless `confirm=true`; the draft is returned first. The `cli` user is inactive with an unusable password. | `mcp_server/server.py` |
+| S11 | A subject spec has `issue_url = ""`, `issue_number = null` (`Spec.source == "subject"`) and `repo = GITEA_REPO`; the allowlist is still enforced when it is published. | `services._subject_item`, `Spec.source` |
 | S10 | The Gitea bot is not an instance admin; its token has every scope on purpose (local stack). Tighten before any shared deployment. | `docs/mcp.md` |
 
 ## Open

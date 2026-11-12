@@ -285,3 +285,24 @@ a doc promising a link in the 409 message the code does not return, and an MCP c
 refusal on a freeze was correct behaviour, and the fix was to state the grant, not to bypass it.
 
 **Found only by a clean clone:** `test_create_rejects_invalid_url` passed here because the AI key exists on this machine and failed (503) without it. Neither the agents nor the reviewers could see it; a clone in `/tmp` without secrets did. Fixed by pinning `AI_ENABLED` in the test.
+
+## 2026-11-12 (later) — Subject → spec → issue, and the claims around it
+
+**Goal:** make the system go both ways with the tracker through the AI (issue → spec, and a typed
+subject → spec → new issue), with one generic prompt; state the user's directives and audit in
+GENAI.md; fix the caveats found in the delivery check.
+
+**Tool and workflow:** two `general` agents with disjoint file sets (specs backend; web), the
+contract fixed by me beforehand; I read the diffs, ran the checks and a live round trip myself.
+
+**Accepted:** the serializer-plus-service guard for "exactly one input"; a nullable `issue_number` and
+a `source` property instead of a second model; the vague-input rule in the prompt.
+
+**Corrected:** the agents reported lint clean; running `pre-commit` showed it reformatted
+`mcp_server/` to 88 columns because the hook ran without the project's ruff config. The hooks are now
+scoped to `api/`. I also left a docs claim to check: "services do not depend on DRF" is true for
+`tasks` and for `specs/services.py`, but the adapters it calls raise DRF exceptions, so the Clean
+Architecture note says so.
+
+**Lesson:** a live run against the real model and tracker is the only check of this feature that
+the mocked tests cannot give; it took one script and left the Gitea seed as it was.
